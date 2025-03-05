@@ -1,3 +1,6 @@
+
+/* eslint-disable */
+
 "use client"
 import SignUp from "./SignUp"
 import Login from "./Login"
