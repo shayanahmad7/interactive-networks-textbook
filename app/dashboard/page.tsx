@@ -430,8 +430,8 @@ const chatMap = [
     
             {viewMode === "pdf" ? (
               <div className="bg-white shadow-lg rounded-lg p-6 border-l-4 border-indigo-500">
-                <h2 className="text-2xl font-bold text-indigo-800 mb-4">Pre-Algebra DeMystified</h2>
-                <embed src="/mathtextbook.pdf" type="application/pdf" width="100%" height="600px" />
+                <h2 className="text-2xl font-bold text-indigo-800 mb-4">Computer Networking: A Top-Down Approach</h2>
+                <embed src="/networks-textbook.pdf" type="application/pdf" width="100%" height="600px" />
               </div>
             ) : selectedSection ? (
               <div className="bg-white shadow-lg rounded-lg p-6 border-l-4 border-indigo-500">
