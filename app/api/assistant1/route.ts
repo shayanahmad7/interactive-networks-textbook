@@ -32,7 +32,7 @@ async function connectToDatabase() {
   if (!db) {
     
     await client.connect();
-    db = client.db('math-confidence');
+    db = client.db('interactive-networks-textbook');
     collection = db.collection<Thread>('threads1');
     
   }

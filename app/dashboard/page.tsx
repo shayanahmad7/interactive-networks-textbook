@@ -21,153 +21,128 @@ import Chat8 from "@/components/Chat8"
 
 const chapters = [
   {
-    title: "Chapter 1: Whole Numbers",
+    title: "Chapter 1: Computer Networks and the Internet",
     sections: [
-      { title: "Naming Numbers", mastered: false },
-      { title: "Rounding Numbers", mastered: false },
-      { title: "Addition of Whole Numbers", mastered: false },
-      { title: "Subtraction of Whole Numbers", mastered: false },
-      { title: "Multiplication of Whole Numbers", mastered: false },
-      { title: "Division of Whole Numbers", mastered: false },
-      { title: "Word Problems", mastered: false },
-      { title: "Quiz 1", mastered: false },
+      { title: "What is the Internet?", mastered: false },
+      { title: "The Network Edge", mastered: false },
+      { title: "The Network Core", mastered: false },
+      { title: "Delay, Loss, and Throughput in Packet-Switched Networks", mastered: false },
+      { title: "Protocol Layers and Their Service Models", mastered: false },
+      { title: "Networks Under Attack", mastered: false },
+      { title: "History of Computer Networking and the Internet", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 2: Integers",
+    title: "Chapter 2: Application Layer",
     sections: [
-      { title: "Basic Concepts", mastered: false },
-      { title: "Addition of Integers", mastered: false },
-      { title: "Subtraction of Integers", mastered: false },
-      { title: "Multiplication of Integers", mastered: false },
-      { title: "Division of Integers", mastered: false },
-      { title: "Exponents", mastered: false },
-      { title: "Order of Operations", mastered: false },
-      { title: "Quiz 2", mastered: false },
+      { title: "Principles of Network Applications", mastered: false },
+      { title: "The Web and HTTP", mastered: false },
+      { title: "File Transfer: FTP", mastered: false },
+      { title: "Electronic Mail in the Internet", mastered: false },
+      { title: "DNS—The Internet’s Directory Service", mastered: false },
+      { title: "Peer-to-Peer Applications", mastered: false },
+      { title: "Video Streaming and Content Distribution Networks", mastered: false },
+      { title: "Socket Programming: Creating Network Applications", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 3: Fractions: Part 1",
+    title: "Chapter 3: Transport Layer",
     sections: [
-      { title: "Basic Concepts", mastered: false },
-      { title: "Reducing Fractions to Lowest Terms", mastered: false },
-      { title: "Changing Fractions to Higher Terms", mastered: false },
-      { title: "Changing Improper Fractions to Mixed Numbers", mastered: false },
-      { title: "Changing Mixed Numbers to Improper Fractions", mastered: false },
-      { title: "Quiz 3", mastered: false },
+      { title: "Introduction and Transport-Layer Services", mastered: false },
+      { title: "Multiplexing and Demultiplexing", mastered: false },
+      { title: "Connectionless Transport: UDP", mastered: false },
+      { title: "Principles of Reliable Data Transfer", mastered: false },
+      { title: "Connection-Oriented Transport: TCP", mastered: false },
+      { title: "Principles of Congestion Control", mastered: false },
+      { title: "TCP Congestion Control", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 4: Fractions: Part 2",
+    title: "Chapter 4: The Network Layer: Data Plane",
     sections: [
-      { title: "Multiplying Fractions", mastered: false },
-      { title: "Dividing Fractions", mastered: false },
-      { title: "Adding and Subtracting Fractions", mastered: false },
-      { title: "Complex Fractions", mastered: false },
-      { title: "Reciprocals and Rationalizing Denominators", mastered: false },
-      { title: "Quiz 4", mastered: false },
+      { title: "Introduction", mastered: false },
+      { title: "Forwarding and Routing", mastered: false },
+      { title: "Network Service Models", mastered: false },
+      { title: "Inside a Router", mastered: false },
+      { title: "The Internet Protocol (IP): Forwarding and Addressing in the Internet", mastered: false },
+      { title: "Generalized Forwarding and SDN", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 5: Decimals",
+    title: "Chapter 5: The Network Layer: Control Plane",
     sections: [
-      { title: "Introduction to Decimals", mastered: false },
-      { title: "Converting Fractions to Decimals", mastered: false },
-      { title: "Adding and Subtracting Decimals", mastered: false },
-      { title: "Multiplying Decimals", mastered: false },
-      { title: "Dividing Decimals", mastered: false },
-      { title: "Decimals and Fractions", mastered: false },
-      { title: "Rounding Decimals", mastered: false },
-      { title: "Quiz 5", mastered: false },
+      { title: "Introduction", mastered: false },
+      { title: "Routing Algorithms", mastered: false },
+      { title: "The Internet’s Network Layer", mastered: false },
+      { title: "What’s Inside a Router?", mastered: false },
+      { title: "SDN Control Plane", mastered: false },
+      { title: "ICMP: The Internet Control Message Protocol", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 6: Percent",
+    title: "Chapter 6: The Link Layer and LANs",
     sections: [
-      { title: "Understanding Percent", mastered: false },
-      { title: "Calculating Percentages", mastered: false },
-      { title: "Increasing and Decreasing Numbers by Percent", mastered: false },
-      { title: "Percent Problems", mastered: false },
-      { title: "Applications of Percent", mastered: false },
-      { title: "Quiz 6", mastered: false },
+      { title: "Introduction to the Link Layer", mastered: false },
+      { title: "Error Detection and Correction Techniques", mastered: false },
+      { title: "Multiple Access Links and Protocols", mastered: false },
+      { title: "Switched Local Area Networks", mastered: false },
+      { title: "Link Virtualization: MPLS", mastered: false },
+      { title: "Data Center Networking", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 7: Expressions and Equations",
+    title: "Chapter 7: Wireless and Mobile Networks",
     sections: [
-      { title: "Simplifying Algebraic Expressions", mastered: false },
-      { title: "Solving Simple Equations", mastered: false },
-      { title: "Solving Multi-step Equations", mastered: false },
-      { title: "Using Equations to Solve Problems", mastered: false },
-      { title: "Checking Solutions", mastered: false },
-      { title: "Quiz 7", mastered: false },
+      { title: "Introduction", mastered: false },
+      { title: "Wireless Links and Network Characteristics", mastered: false },
+      { title: "WiFi: 802.11 Wireless LANs", mastered: false },
+      { title: "Cellular Internet Access", mastered: false },
+      { title: "Mobility Management: Principles", mastered: false },
+      { title: "Mobile IP", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 8: Ratio and Proportion",
+    title: "Chapter 8: Security in Computer Networks",
     sections: [
-      { title: "Understanding Ratios", mastered: false },
-      { title: "Properties of Proportions", mastered: false },
-      { title: "Solving Proportions", mastered: false },
-      { title: "Applications of Proportions", mastered: false },
-      { title: "Similar Figures and Scale Drawings", mastered: false },
-      { title: "Quiz 8", mastered: false },
+      { title: "What is Network Security?", mastered: false },
+      { title: "Principles of Cryptography", mastered: false },
+      { title: "Message Integrity and Authentication", mastered: false },
+      { title: "Securing E-Mail", mastered: false },
+      { title: "Securing TCP Connections: SSL/TLS", mastered: false },
+      { title: "Network-Layer Security: IPsec", mastered: false },
+      { title: "Securing Wireless LANs", mastered: false },
+      { title: "Operational Security: Firewalls and Intrusion Detection Systems", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 9: Informal Geometry",
+    title: "Chapter 9: Multimedia Networking",
     sections: [
-      { title: "Points, Lines, and Planes", mastered: false },
-      { title: "Angles and Their Measures", mastered: false },
-      { title: "Constructing Angles and Lines", mastered: false },
-      { title: "Polygons and Circles", mastered: false },
-      { title: "Area and Perimeter", mastered: false },
-      { title: "Volume and Surface Area", mastered: false },
-      { title: "Quiz 9", mastered: false },
+      { title: "Multimedia Networking Applications", mastered: false },
+      { title: "Streaming Stored Video", mastered: false },
+      { title: "Live Streaming and Real-Time Interactive Applications", mastered: false },
+      { title: "Content Distribution Networks", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
   {
-    title: "Chapter 10: Measurement",
+    title: "Chapter 10: Network Management",
     sections: [
-      { title: "Units of Measurement", mastered: false },
-      { title: "Measuring Length", mastered: false },
-      { title: "Measuring Area and Volume", mastered: false },
-      { title: "Temperature and Time", mastered: false },
-      { title: "Converting Units", mastered: false },
-      { title: "Quiz 10", mastered: false },
+      { title: "Infrastructure for Network Management", mastered: false },
+      { title: "The Internet-Standard Management Framework", mastered: false },
+      { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
-  {
-    title: "Chapter 11: Graphing",
-    sections: [
-      { title: "Introduction to Graphing", mastered: false },
-      { title: "Plotting Points", mastered: false },
-      { title: "Graphing Linear Equations", mastered: false },
-      { title: "Slope and Intercept", mastered: false },
-      { title: "Graphing Inequalities", mastered: false },
-      { title: "Quiz 11", mastered: false },
-    ],
-  },
-  {
-    title: "Chapter 12: Operations with Monomials and Polynomials",
-    sections: [
-      { title: "Understanding Monomials", mastered: false },
-      { title: "Adding and Subtracting Polynomials", mastered: false },
-      { title: "Multiplying Polynomials", mastered: false },
-      { title: "Special Products", mastered: false },
-      { title: "Factoring Polynomials", mastered: false },
-      { title: "Quiz 12", mastered: false },
-    ],
-  },
-  {
-    title: "Final Exam",
-    sections: [{ title: "Final Exam", mastered: false }],
-  },
-  {
-    title: "Supplement: Overcoming Math Anxiety",
-    sections: [{ title: "Overcoming Math Anxiety", mastered: false }],
-  },
-]
+];
+
+
 
 const chatMap = [
     Chat1,  // index 0 => "Naming Numbers"
@@ -487,39 +462,48 @@ const chatMap = [
               // Welcome Screen
               <div className="bg-white shadow-lg rounded-lg p-6 border-l-4 border-indigo-500">
                 <h1 className="text-3xl font-bold text-indigo-800 mb-4">
-                  Welcome to Your Interactive Pre-Algebra AI Textbook
+                  Welcome to Your Interactive Computer Networks AI Textbook
                 </h1>
                 <p className="text-indigo-600 mb-4">
-                  This interactive textbook is based on "Pre-Algebra DeMYSTiFieD" by Allan Bluman (McGraw-Hill). We credit
-                  the author for the original material, which we've used to train an AI that provides a dynamic learning
-                  experience.
+                  This interactive textbook is based on <strong>"Computer Networking: A Top-Down Approach"</strong> 
+                  by <strong>James F. Kurose</strong> and <strong>Keith W. Ross</strong>. We credit the authors for the original 
+                  material, which has been used to create an AI-driven learning experience that guides you through 
+                  computer networking concepts in an interactive and structured way.
                 </p>
+                
                 <h2 className="text-xl font-semibold text-indigo-700 mb-2">How It Works</h2>
                 <p className="text-indigo-600 mb-4">
-                  Each topic is split into smaller sections. You'll have a specialized 'mini tutor' for each section. Simply
-                  click a subsection on the left to start a tutoring session.
+                  Each section of the book has its own dedicated <strong>mini tutor</strong>. These tutors are focused 
+                  <strong> only </strong> on their assigned section and will <strong>not answer questions</strong> outside their scope. 
+                  If you want to learn about another section, simply switch to the appropriate tutor.
                 </p>
+                <p className="text-indigo-600 mb-4">
+                  The AI tutors will guide you <strong>bit by bit</strong>, just like a textbook, explaining concepts in a structured 
+                  way, testing your understanding after each subsection, and ensuring you grasp the material before moving on.
+                </p>
+
                 <h2 className="text-xl font-semibold text-indigo-700 mb-2">How to Use</h2>
                 <ul className="list-disc list-inside text-indigo-600 mb-4">
-                  <li>Select a section from the left to launch its mini tutor.</li>
-                  <li>The tutor will teach or review the concept, ask you questions, give examples, and quiz you.</li>
-                  <li>
-                    If you get 3 questions correct in a row, the system marks that topic as 'mastered.' You can then move on
-                    to the next one (or revisit anytime).
-                  </li>
-                  <li>You can always come back to a previous section to review or practice more.</li>
+                  <li>Start a session by selecting a section from the left.</li>
+                  <li>The AI tutor will introduce the topic and guide you through it systematically.</li>
+                  <li>At any point, you can ask questions, request clarification, or move ahead.</li>
+                  <li>Conversations are <strong>automatically saved</strong>, so you can revisit past discussions anytime for quick revision.</li>
+                  <li>Once you complete a section, you can move on to the next mini tutor to continue your learning journey.</li>
                 </ul>
+
                 <p className="text-indigo-800 font-medium bg-indigo-100 p-4 rounded-lg">
-                  Remember, everyone can learn math with the right approach. Let's build your confidence together!
+                  This platform is designed to make learning <strong>computer networking</strong> more interactive, structured, and personalized. 
+                  Let’s dive in and explore the <strong>fundamentals of the Internet, protocols, and networks—one section at a time!</strong>
                 </p>
               </div>
             )}
             {/* Disclaimer */}
             <div className="mt-8 text-sm text-indigo-500 bg-white p-4 rounded-lg shadow">
               <p>
-                Disclaimer: This platform is a prototype that uses content from 'Pre-Algebra DeMYSTiFieD' (McGraw-Hill) to
-                train AI tutors. We credit the author, Allan Bluman, for the original material. This project is for
-                demonstration purposes only.
+                <strong>Disclaimer:</strong> This platform is a prototype that provides an AI-powered interactive learning experience for 
+                <strong>computer networking</strong>. It is based on content from <strong>"Computer Networking: A Top-Down Approach"</strong> 
+                by <strong>James F. Kurose</strong> and <strong>Keith W. Ross</strong>. We credit the authors for their original work. 
+                This platform is intended for educational purposes only.
               </p>
             </div>
           </main>
