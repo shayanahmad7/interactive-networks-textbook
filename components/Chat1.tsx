@@ -42,7 +42,6 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
 
   const [fetchedMessages, setFetchedMessages] = useState<Message[]>([]); // Store fetched messages
   const [isLoadingHistory, setIsLoadingHistory] = useState(true); // Track loading state
-  const [historyLoaded, setHistoryLoaded] = useState(false); // New state to track if history loading is finished
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -74,17 +73,18 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
             }));
 
             setFetchedMessages(newMessages); // Store fetched messages in state
+            setMessages(newMessages); // Set messages to display
           } catch (e) {
             // Wait until the full JSON object is received
           }
         }
 
         setIsLoadingHistory(false); // Mark loading as complete
-        setHistoryLoaded(true);
+        
       } catch (error) {
         console.error("Error fetching chat history:", error);
         setIsLoadingHistory(false); // Stop loading even if there's an error
-        setHistoryLoaded(true);
+        
       }
     };
 
@@ -92,44 +92,11 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
   }, [userId]); // Runs once when userId changes
 
   
-  useEffect(() => {
-    if (historyLoaded) {
-      const initialMessages: Message[] = [
-        {
-          id: "initial-1",
-          content:
-            "Welcome to the first section on Whole Numbers: Naming Numbers.\nWe will start from the basics till you master it. Ask me any questions along the way, and remember, YOU'VE GOT THIS!",
-          role: "assistant",
-        },
-        {
-          id: "initial-2",
-          content: "Would you like to start?",
-          role: "assistant",
-        },
-      ];
-  
-      // ✅ Ensure messages update only after the first effect is fully done
-      setMessages([...initialMessages, ...fetchedMessages]);
-    }
-  }, [historyLoaded]); // Runs ONLY when history is fully loaded
-
 
   // Append AI messages while keeping fetched messages
   useEffect(() => {
-    const initialMessages: Message[] = [
-      {
-        id: 'initial-1',
-        content:
-          "Welcome to the first section on Whole Numbers: Naming Numbers.\nWe will start from the basics till you master it. Ask me any questions along the way, and remember, YOU'VE GOT THIS!",
-        role: 'assistant',
-      },
-      {
-        id: 'initial-2',
-        content: 'Would you like to start?',
-        role: 'assistant',
-      },
-    ]
-    setMessages([...initialMessages,...fetchedMessages, ...aiMessages]); // Ensures messages persist
+
+    setMessages([...fetchedMessages, ...aiMessages]); // Ensures messages persist
   }, [aiMessages]); // Runs whenever AI messages change
 
 
@@ -397,7 +364,7 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
             type="text"
             value={input}
             onChange={handleInputChange}
-            placeholder="Ask about Naming Numbers..."
+            placeholder="Say hi to begin learning if this is your first time, or continue your existing conversation..."
             disabled={isStreaming}
             className="flex-1 rounded-l-full bg-transparent px-6 py-3 focus:outline-none"
           />

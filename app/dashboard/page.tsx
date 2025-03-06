@@ -11,12 +11,13 @@ import Confetti from 'react-confetti'
 
 import Chat1 from "@/components/Chat1"
 import Chat2 from "@/components/Chat2"
-import Chat3 from "@/components/Chat8"
-import Chat4 from "@/components/Chat8"
-import Chat5 from "@/components/Chat8"
-import Chat6 from "@/components/Chat8"
-import Chat7 from "@/components/Chat8"
+import Chat3 from "@/components/Chat3"
+import Chat4 from "@/components/Chat4"
+import Chat5 from "@/components/Chat5"
+import Chat6 from "@/components/Chat6"
+import Chat7 from "@/components/Chat7"
 import Chat8 from "@/components/Chat8"
+import Chat9 from "@/components/Chat9"
 
 
 const chapters = [
@@ -30,6 +31,7 @@ const chapters = [
       { title: "Protocol Layers and Their Service Models", mastered: false },
       { title: "Networks Under Attack", mastered: false },
       { title: "History of Computer Networking and the Internet", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -44,6 +46,7 @@ const chapters = [
       { title: "Peer-to-Peer Applications", mastered: false },
       { title: "Video Streaming and Content Distribution Networks", mastered: false },
       { title: "Socket Programming: Creating Network Applications", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -57,6 +60,7 @@ const chapters = [
       { title: "Connection-Oriented Transport: TCP", mastered: false },
       { title: "Principles of Congestion Control", mastered: false },
       { title: "TCP Congestion Control", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -69,6 +73,7 @@ const chapters = [
       { title: "Inside a Router", mastered: false },
       { title: "The Internet Protocol (IP): Forwarding and Addressing in the Internet", mastered: false },
       { title: "Generalized Forwarding and SDN", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -81,6 +86,7 @@ const chapters = [
       { title: "What’s Inside a Router?", mastered: false },
       { title: "SDN Control Plane", mastered: false },
       { title: "ICMP: The Internet Control Message Protocol", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -93,6 +99,7 @@ const chapters = [
       { title: "Switched Local Area Networks", mastered: false },
       { title: "Link Virtualization: MPLS", mastered: false },
       { title: "Data Center Networking", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -105,6 +112,7 @@ const chapters = [
       { title: "Cellular Internet Access", mastered: false },
       { title: "Mobility Management: Principles", mastered: false },
       { title: "Mobile IP", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -119,6 +127,7 @@ const chapters = [
       { title: "Network-Layer Security: IPsec", mastered: false },
       { title: "Securing Wireless LANs", mastered: false },
       { title: "Operational Security: Firewalls and Intrusion Detection Systems", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -129,6 +138,7 @@ const chapters = [
       { title: "Streaming Stored Video", mastered: false },
       { title: "Live Streaming and Real-Time Interactive Applications", mastered: false },
       { title: "Content Distribution Networks", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -137,6 +147,7 @@ const chapters = [
     sections: [
       { title: "Infrastructure for Network Management", mastered: false },
       { title: "The Internet-Standard Management Framework", mastered: false },
+      { title: "Summary", mastered: false },
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
@@ -145,91 +156,28 @@ const chapters = [
 
 
 const chatMap = [
-    Chat1,  // index 0 => "Naming Numbers"
-    Chat2,  // index 1 => "Rounding Numbers"
-    Chat3,  // index 2 => "Addition of Whole Numbers"
-    Chat4,  // index 3 => "Subtraction of Whole Numbers"
-    Chat5,  // index 4 => "Multiplication of Whole Numbers"
-    Chat6,  // index 5 => "Division of Whole Numbers"
-    Chat7,  // index 6 => "Word Problems"
-    Chat8,  // index 7 => "Quiz 1"
-    // Chat9,  // index 8 => "Basic Concepts"
-    // Chat10, // index 9 => "Addition of Integers"
-    // Chat11, // index 10 => "Subtraction of Integers"
-    // Chat12, // index 11 => "Multiplication of Integers"
-    // Chat13, // index 12 => "Division of Integers"
-    // Chat14, // index 13 => "Exponents"
-    // Chat15, // index 14 => "Order of Operations"
-    // Chat16, // index 15 => "Quiz 2"
-    // Chat17, // index 16 => "Basic Concepts"
-    // Chat18, // index 17 => "Reducing Fractions to Lowest Terms"
-    // Chat19, // index 18 => "Changing Fractions to Higher Terms"
-    // Chat20, // index 19 => "Changing Improper Fractions to Mixed Numbers"
-    // Chat21, // index 20 => "Changing Mixed Numbers to Improper Fractions"
-    // Chat22, // index 21 => "Quiz 3"
-    // Chat23, // index 22 => "Multiplying Fractions"
-    // Chat24, // index 23 => "Dividing Fractions"
-    // Chat25, // index 24 => "Adding and Subtracting Fractions"
-    // Chat26, // index 25 => "Complex Fractions"
-    // Chat27, // index 26 => "Reciprocals and Rationalizing Denominators"
-    // Chat28, // index 27 => "Quiz 4"
-    // Chat29, // index 28 => "Introduction to Decimals"
-    // Chat30, // index 29 => "Converting Fractions to Decimals"
-    // Chat31, // index 30 => "Adding and Subtracting Decimals"
-    // Chat32, // index 31 => "Multiplying Decimals"
-    // Chat33, // index 32 => "Dividing Decimals"
-    // Chat34, // index 33 => "Decimals and Fractions"
-    // Chat35, // index 34 => "Rounding Decimals"
-    // Chat36, // index 35 => "Quiz 5"
-    // Chat37, // index 36 => "Understanding Percent"
-    // Chat38, // index 37 => "Calculating Percentages"
-    // Chat39, // index 38 => "Increasing and Decreasing Numbers by Percent"
-    // Chat40, // index 39 => "Percent Problems"
-    // Chat41, // index 40 => "Applications of Percent"
-    // Chat42, // index 41 => "Quiz 6"
-    // Chat43, // index 42 => "Simplifying Algebraic Expressions"
-    // Chat44, // index 43 => "Solving Simple Equations"
-    // Chat45, // index 44 => "Solving Multi-step Equations"
-    // Chat46, // index 45 => "Using Equations to Solve Problems"
-    // Chat47, // index 46 => "Checking Solutions"
-    // Chat48, // index 47 => "Quiz 7"
-    // Chat49, // index 48 => "Understanding Ratios"
-    // Chat50, // index 49 => "Properties of Proportions"
-    // Chat51, // index 50 => "Solving Proportions"
-    // Chat52, // index 51 => "Applications of Proportions"
-    // Chat53, // index 52 => "Similar Figures and Scale Drawings"
-    // Chat54, // index 53 => "Quiz 8"
-    // Chat55, // index 54 => "Points, Lines, and Planes"
-    // Chat56, // index 55 => "Angles and Their Measures"
-    // Chat57, // index 56 => "Constructing Angles and Lines"
-    // Chat58, // index 57 => "Polygons and Circles"
-    // Chat59, // index 58 => "Area and Perimeter"
-    // Chat60, // index 59 => "Volume and Surface Area"
-    // Chat61, // index 60 => "Quiz 9"
-    // Chat62, // index 61 => "Units of Measurement"
-    // Chat63, // index 62 => "Measuring Length"
-    // Chat64, // index 63 => "Measuring Area and Volume"
-    // Chat65, // index 64 => "Temperature and Time"
-    // Chat66, // index 65 => "Converting Units"
-    // Chat67, // index 66 => "Quiz 10"
-    // Chat68, // index 67 => "Introduction to Graphing"
-    // Chat69, // index 68 => "Plotting Points"
-    // Chat70, // index 69 => "Graphing Linear Equations"
-    // Chat71, // index 70 => "Slope and Intercept"
-    // Chat72, // index 71 => "Graphing Inequalities"
-    // Chat73, // index 72 => "Quiz 11"
-    // Chat74, // index 73 => "Understanding Monomials"
-    // Chat75, // index 74 => "Adding and Subtracting Polynomials"
-    // Chat76, // index 75 => "Multiplying Polynomials"
-    // Chat77, // index 76 => "Special Products"
-    // Chat78, // index 77 => "Factoring Polynomials"
-    // Chat79, // index 78 => "Quiz 12"
-    // Chat80, // index 79 => "Final Exam"
-    // Chat81  // index 80 => "Overcoming Math Anxiety"
-  ];
+  Chat1,  // index 0 => "What is the Internet?"
+  Chat2,  // index 1 => "The Network Edge"
+  Chat3,  // index 2 => "The Network Core"
+  Chat4,  // index 3 => "Delay, Loss, and Throughput in Packet-Switched Networks"
+  Chat5,  // index 4 => "Protocol Layers and Their Service Models"
+  Chat6,  // index 5 => "Networks Under Attack"
+  Chat7,  // index 6 => "History of Computer Networking and the Internet"
+  Chat8,  // index 7 => "Summary"
+  Chat9   // index 7 => "End-of-Chapter Problems"
+];
 
-    const sectionNames = [ "Naming Numbers", "Rounding Numbers", "Addition of Whole Numbers", "Subtraction of Whole Numbers", "Multiplication of Whole Numbers", "Division of Whole Numbers", "Word Problems", "Quiz 1", "Basic Concepts", "Addition of Integers", "Subtraction of Integers", "Multiplication of Integers", "Division of Integers", "Exponents", "Order of Operations", "Quiz 2", "Basic Concepts", "Reducing Fractions to Lowest Terms", "Changing Fractions to Higher Terms", "Changing Improper Fractions to Mixed Numbers", "Changing Mixed Numbers to Improper Fractions", "Quiz 3", "Multiplying Fractions", "Dividing Fractions", "Adding and Subtracting Fractions", "Complex Fractions", "Reciprocals and Rationalizing Denominators", "Quiz 4", "Introduction to Decimals", "Converting Fractions to Decimals", "Adding and Subtracting Decimals", "Multiplying Decimals", "Dividing Decimals", "Decimals and Fractions", "Rounding Decimals", "Quiz 5", "Understanding Percent", "Calculating Percentages", "Increasing and Decreasing Numbers by Percent", "Percent Problems", "Applications of Percent", "Quiz 6", "Simplifying Algebraic Expressions", "Solving Simple Equations", "Solving Multi-step Equations", "Using Equations to Solve Problems", "Checking Solutions", "Quiz 7", "Understanding Ratios", "Properties of Proportions", "Solving Proportions", "Applications of Proportions", "Similar Figures and Scale Drawings", "Quiz 8", "Points, Lines, and Planes", "Angles and Their Measures", "Constructing Angles and Lines", "Polygons and Circles", "Area and Perimeter", "Volume and Surface Area", "Quiz 9", "Units of Measurement", "Measuring Length", "Measuring Area and Volume", "Temperature and Time", "Converting Units", "Quiz 10", "Introduction to Graphing", "Plotting Points", "Graphing Linear Equations", "Slope and Intercept", "Graphing Inequalities", "Quiz 11", "Understanding Monomials", "Adding and Subtracting Polynomials", "Multiplying Polynomials", "Special Products", "Factoring Polynomials", "Quiz 12", "Final Exam", "Overcoming Math Anxiety"]
-
+const sectionNames = [
+  "What is the Internet?", 
+  "The Network Edge", 
+  "The Network Core", 
+  "Delay, Loss, and Throughput in Packet-Switched Networks", 
+  "Protocol Layers and Their Service Models", 
+  "Networks Under Attack", 
+  "History of Computer Networking and the Internet", 
+  "Summary",
+  "End-of-Chapter Problems"
+];
   
     export default function DashboardPage() {
       const [user, setUser] = useState<any>(null)
@@ -436,7 +384,7 @@ const chatMap = [
             ) : selectedSection ? (
               <div className="bg-white shadow-lg rounded-lg p-6 border-l-4 border-indigo-500">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold text-indigo-800">Interactive AI Tutor for {selectedSection}</h2>
+                  <h2 className="text-2xl font-bold text-indigo-800">Interactive AI Mini-Tutor for {selectedSection}</h2>
                   <button
                     className="px-4 py-2 bg-yellow-500 text-white rounded-lg flex items-center"
                     onClick={() => setShowPopup(true)}
@@ -501,7 +449,7 @@ const chatMap = [
             <div className="mt-8 text-sm text-indigo-500 bg-white p-4 rounded-lg shadow">
               <p>
                 <strong>Disclaimer:</strong> This platform is a prototype that provides an AI-powered interactive learning experience for 
-                <strong>computer networking</strong>. It is based on content from <strong>"Computer Networking: A Top-Down Approach"</strong> 
+                <strong> computer networking </strong>. It is based on content from <strong>"Computer Networking: A Top-Down Approach"</strong> 
                 by <strong>James F. Kurose</strong> and <strong>Keith W. Ross</strong>. We credit the authors for their original work. 
                 This platform is intended for educational purposes only.
               </p>
