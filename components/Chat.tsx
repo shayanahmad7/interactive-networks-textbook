@@ -112,10 +112,66 @@ const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
 
         setIsLoadingHistory(false); // Mark loading as complete
         
+        // If no messages exist, trigger the initial message
+        if (newMessages.length === 0) {
+          // Send a hidden initial message to start the conversation
+          try {
+            const response = await fetch(`/api/assistant/${assistantId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                userId,
+                threadId: null,
+                message: 'Hi', // This will trigger the initial message logic
+              }),
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to send initial message');
+            }
+            
+            // Refresh the messages after sending the initial message
+            setTimeout(() => {
+              fetchChatHistory();
+            }, 1000);
+          } catch (error) {
+            console.error('Error sending initial message:', error);
+          }
+        }
+        
       } catch (error) {
         console.error("Error fetching chat history:", error);
         setIsLoadingHistory(false); // Stop loading even if there's an error
         
+        // If there's an error and no messages, try to send initial message
+        if (fetchedMessages.length === 0) {
+          try {
+            const response = await fetch(`/api/assistant/${assistantId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                userId,
+                threadId: null,
+                message: 'Hi', // This will trigger the initial message logic
+              }),
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to send initial message');
+            }
+            
+            // Refresh the messages after sending the initial message
+            setTimeout(() => {
+              fetchChatHistory();
+            }, 1000);
+          } catch (error) {
+            console.error('Error sending initial message:', error);
+          }
+        }
       }
     };
 

@@ -9,6 +9,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  isInitialMessage?: boolean; // Flag to track if this is the hidden initial message
 }
 
 // Define the structure of the thread document
@@ -16,6 +17,7 @@ interface Thread {
   userId: string; // Unique identifier for the user
   threadId: string; // OpenAI thread ID
   messages: Message[]; // Array of messages in the thread
+  hasInitialMessage?: boolean; // Flag to track if initial message was sent
 }
 
 const openai = new OpenAI({
@@ -51,7 +53,8 @@ async function saveMessageToDatabase(
   threadId: string,
   role: 'user' | 'assistant',
   content: string,
-  assistantId: string
+  assistantId: string,
+  isInitialMessage: boolean = false
 ) {
   try {
     if (!db) {
@@ -75,6 +78,7 @@ async function saveMessageToDatabase(
       role,
       content,
       timestamp: new Date(),
+      isInitialMessage,
     };
 
     await collection.updateOne(
@@ -136,8 +140,18 @@ export async function GET(req: Request) {
       });
     }
 
-    // Extract and return the messages
-    const messages = thread.messages || [];
+    // Extract and return the messages (excluding the initial hidden message)
+    // For existing chats without isInitialMessage flag, also hide the first message to maintain consistency
+    let messages = thread.messages || [];
+    
+    // Filter out messages marked as initial messages
+    messages = messages.filter(msg => !msg.isInitialMessage);
+    
+    // For existing chats that don't have the isInitialMessage flag, hide the first user message
+    // to make it seem like the AI started the conversation
+    if (messages.length > 0 && messages[0].role === 'user') {
+      messages = messages.slice(1); // Remove the first user message
+    }
 
     return new Response(JSON.stringify({ messages }), {
       status: 200,
@@ -175,29 +189,117 @@ export async function POST(req: Request) {
     const input: { userId: string; threadId: string | null; message: string } = await req.json();
 
     let threadId = input.threadId;
+    let isNewThread = false;
+
+    // Connect to database
+    if (!db) {
+      await connectToDatabase();
+    }
+    const collection = getCollection(assistantId);
 
     // If no threadId is provided, check if an existing thread exists for the user
     if (!threadId) {
-      if (!db) {
-        await connectToDatabase();
-      }
-      const collection = getCollection(assistantId);
       const existingThread = await collection.findOne({ userId: input.userId });
       if (existingThread) {
         threadId = existingThread.threadId;
       } else {
         // Create a new thread if none exists
         threadId = (await openai.beta.threads.create({})).id;
+        isNewThread = true;
 
         // Save the new thread in MongoDB
         await collection.insertOne({
           userId: input.userId,
           threadId,
           messages: [],
+          hasInitialMessage: false,
         });
       }
     }
 
+    // Check if this thread needs an initial message
+    const threadDoc = await collection.findOne({ userId: input.userId, threadId });
+    const needsInitialMessage = isNewThread || (threadDoc && !threadDoc.hasInitialMessage);
+
+    // If this is the initial "Hi" message or we need to send an initial message
+    if (input.message === 'Hi' && needsInitialMessage) {
+      try {
+        // Cancel any active runs for this thread
+        await cancelActiveRuns(threadId);
+
+        // Create the initial user message on the OpenAI thread
+        const initialMessage = await openai.beta.threads.messages.create(threadId, {
+          role: 'user',
+          content: 'Hi',
+        });
+
+        // Save the initial user message to MongoDB (hidden from UI)
+        await saveMessageToDatabase(input.userId, threadId, 'user', 'Hi', assistantId, true);
+
+        // Get the assistant ID from environment variables
+        const assistantEnvVar = `ASSISTANT${assistantId.toUpperCase()}_ID`;
+        const assistantOpenAIId = process.env[assistantEnvVar];
+
+        if (!assistantOpenAIId) {
+          throw new Error(`${assistantEnvVar} is not set`);
+        }
+
+        // Run the assistant to get the initial response
+        const run = await openai.beta.threads.runs.create(threadId, {
+          assistant_id: assistantOpenAIId,
+        });
+
+        // Wait for the run to complete
+        let runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+        while (runStatus.status === 'in_progress' || runStatus.status === 'queued') {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+        }
+
+        // Get the assistant's response
+        const messages = await openai.beta.threads.messages.list(threadId);
+        const lastMessage = messages.data[0];
+
+        if (lastMessage && lastMessage.role === 'assistant') {
+          const content = lastMessage.content[0];
+          if (content.type === 'text') {
+            // Save the assistant's initial response to MongoDB (hidden from UI)
+            await saveMessageToDatabase(
+              input.userId,
+              threadId,
+              'assistant',
+              content.text.value,
+              assistantId,
+              true
+            );
+          }
+        }
+
+        // Mark that the initial message has been sent
+        await collection.updateOne(
+          { userId: input.userId, threadId },
+          { $set: { hasInitialMessage: true } }
+        );
+
+        // Return success for the initial message
+        return new Response(JSON.stringify({ success: true, threadId }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+      } catch (error) {
+        console.error('Error sending initial message:', error);
+        return new Response(
+          JSON.stringify({ error: 'Failed to send initial message' }),
+          {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
+
+    // Handle normal messages
     try {
       // Cancel any active runs for this thread
       await cancelActiveRuns(threadId);
@@ -209,7 +311,7 @@ export async function POST(req: Request) {
       });
 
       // Save the user's message to MongoDB
-      await saveMessageToDatabase(input.userId, threadId, 'user', input.message, assistantId);
+      await saveMessageToDatabase(input.userId, threadId, 'user', input.message, assistantId, false);
 
       // Get the assistant ID from environment variables
       const assistantEnvVar = `ASSISTANT${assistantId.toUpperCase()}_ID`;
@@ -243,7 +345,8 @@ export async function POST(req: Request) {
                 threadId,
                 'assistant',
                 content.text.value,
-                assistantId
+                assistantId,
+                false
               );
             }
           }
@@ -285,4 +388,4 @@ function extractPlainText(content: any): string {
     return content.text.value;
   }
   return '';
-} 
+}
