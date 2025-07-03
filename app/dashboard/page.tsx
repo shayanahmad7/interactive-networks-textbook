@@ -9,15 +9,7 @@ import { supabase } from "@/lib/supabase"
 import { CheckCircle, Circle, Book, LogOut, ChevronDown, ChevronUp } from "lucide-react"
 import Confetti from 'react-confetti'
 
-import Chat1 from "@/components/Chat1"
-import Chat2 from "@/components/Chat2"
-import Chat3 from "@/components/Chat3"
-import Chat4 from "@/components/Chat4"
-import Chat5 from "@/components/Chat5"
-import Chat6 from "@/components/Chat6"
-import Chat7 from "@/components/Chat7"
-import Chat8 from "@/components/Chat8"
-import Chat9 from "@/components/Chat9"
+import Chat from "@/components/Chat"
 
 
 const chapters = [
@@ -42,7 +34,7 @@ const chapters = [
       { title: "The Web and HTTP", mastered: false },
       { title: "File Transfer: FTP", mastered: false },
       { title: "Electronic Mail in the Internet", mastered: false },
-      { title: "DNS—The Internet’s Directory Service", mastered: false },
+      { title: "DNS—The Internet's Directory Service", mastered: false },
       { title: "Peer-to-Peer Applications", mastered: false },
       { title: "Video Streaming and Content Distribution Networks", mastered: false },
       { title: "Socket Programming: Creating Network Applications", mastered: false },
@@ -82,8 +74,8 @@ const chapters = [
     sections: [
       { title: "Introduction", mastered: false },
       { title: "Routing Algorithms", mastered: false },
-      { title: "The Internet’s Network Layer", mastered: false },
-      { title: "What’s Inside a Router?", mastered: false },
+      { title: "The Internet's Network Layer", mastered: false },
+      { title: "What's Inside a Router?", mastered: false },
       { title: "SDN Control Plane", mastered: false },
       { title: "ICMP: The Internet Control Message Protocol", mastered: false },
       { title: "Summary", mastered: false },
@@ -155,18 +147,6 @@ const chapters = [
 
 
 
-const chatMap = [
-  Chat1,  // index 0 => "What is the Internet?"
-  Chat2,  // index 1 => "The Network Edge"
-  Chat3,  // index 2 => "The Network Core"
-  Chat4,  // index 3 => "Delay, Loss, and Throughput in Packet-Switched Networks"
-  Chat5,  // index 4 => "Protocol Layers and Their Service Models"
-  Chat6,  // index 5 => "Networks Under Attack"
-  Chat7,  // index 6 => "History of Computer Networking and the Internet"
-  Chat8,  // index 7 => "Summary"
-  Chat9   // index 7 => "End-of-Chapter Problems"
-];
-
 const sectionNames = [
   "What is the Internet?", 
   "The Network Edge", 
@@ -177,6 +157,18 @@ const sectionNames = [
   "History of Computer Networking and the Internet", 
   "Summary",
   "End-of-Chapter Problems"
+];
+
+const chatMap = [
+  "1", // What is the Internet?
+  "2", // The Network Edge
+  "3", // The Network Core
+  "4", // Delay, Loss, and Throughput in Packet-Switched Networks
+  "5", // Protocol Layers and Their Service Models
+  "6", // Networks Under Attack
+  "7", // History of Computer Networking and the Internet
+  "8", // Summary
+  "9"  // End-of-Chapter Problems
 ];
   
     export default function DashboardPage() {
@@ -393,17 +385,9 @@ const sectionNames = [
                   </button>
                 </div>
                 {(() => {
-                  const idx = sectionNames.indexOf(selectedSection)
-                  if (idx === -1) {
-                    return <div>No chat component mapped for this section yet.</div>
-                  }
-                  const ChatComponent = chatMap[idx]
-                  if (!ChatComponent) {
-                    return (
-                      <p className="text-indigo-600">The interactive AI tutor for this section will be integrated here.</p>
-                    )
-                  }
-                  return <ChatComponent userId={user.id}/>
+                  const index = sectionNames.findIndex(name => name === selectedSection)
+                  const assistantId = index !== -1 ? chatMap[index] : undefined
+                  return <Chat userId={user.id} assistantId={assistantId} key={`${user.id}-${assistantId || 'none'}`} />
                 })()}
               </div>
             ) : (
@@ -441,7 +425,7 @@ const sectionNames = [
 
                 <p className="text-indigo-800 font-medium bg-indigo-100 p-4 rounded-lg">
                   This platform is designed to make learning <strong>computer networking</strong> more interactive, structured, and personalized. 
-                  Let’s dive in and explore the <strong>fundamentals of the Internet, protocols, and networks—one section at a time!</strong>
+                  Let's dive in and explore the <strong>fundamentals of the Internet, protocols, and networks—one section at a time!</strong>
                 </p>
               </div>
             )}

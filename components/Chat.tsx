@@ -14,16 +14,41 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
-
 interface ChatProps {
   userId: string; // The user's unique ID
+  assistantId?: string; // The assistant ID (1, 2, 3, etc.)
 }
 
-const Chat9: React.FC<ChatProps> = ({ userId }) => {
+const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  if (!assistantId) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[400px] text-center">
+        <div className="text-2xl text-red-500 font-bold mb-2">AI Tutor Not Available</div>
+        <div className="text-gray-600 mb-4">Sorry, the interactive AI tutor for this section is not available yet.</div>
+        <input
+          type="text"
+          className="flex-1 bg-gray-100 px-4 py-2 outline-none rounded mb-2 text-center"
+          placeholder="Type your message..."
+          disabled
+          onFocus={() => setShowComingSoon(true)}
+        />
+        <button
+          className="p-2 rounded-full bg-gray-200 text-gray-400 cursor-not-allowed"
+          disabled
+        >
+          Send
+        </button>
+        {showComingSoon && (
+          <div className="mt-2 text-yellow-600 font-medium">AI tutor for this section is coming soon!</div>
+        )}
+      </div>
+    );
+  }
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
-  
 
   // States for text-to-speech (TTS)
   const [isSpeaking, setIsSpeaking] = useState(false)
@@ -31,12 +56,19 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
   
   // A ref to hold the currently playing audio so we can stop it if needed.
   const currentAudioRef = useRef<HTMLAudioElement | null>(null)
-  
+
+  // Cross-browser speech recognition states
+  const [isRecording, setIsRecording] = useState(false)
+  const [isProcessingAudio, setIsProcessingAudio] = useState(false)
+  const recognitionRef = useRef<any>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
+  const finalTranscriptRef = useRef<string>("")
 
   // Use the useAssistant hook to interact with the OpenAI Assistants API
   const { status, messages: aiMessages, input, submitMessage, handleInputChange, stop } = useAssistant({
-    api: '/api/assistant9',
-    body: { assistantId: process.env.ASSISTANT9_ID, userId }, // Pass only userId to the backend
+    api: `/api/assistant/${assistantId}`,
+    body: { userId }, // Pass only userId to the backend
   });
 
   const [fetchedMessages, setFetchedMessages] = useState<Message[]>([]); // Store fetched messages
@@ -48,7 +80,7 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
 
       try {
         setIsLoadingHistory(true); // Start loading state
-        const response = await fetch(`/api/assistant9?userId=${userId}`);
+        const response = await fetch(`/api/assistant/${assistantId}?userId=${userId}`);
         const reader = response.body?.getReader();
         if (!reader) return;
 
@@ -88,16 +120,12 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
     };
 
     fetchChatHistory();
-  }, [userId]); // Runs once when userId changes
-
-  
+  }, [userId, assistantId]); // Runs once when userId or assistantId changes
 
   // Append AI messages while keeping fetched messages
   useEffect(() => {
-
     setMessages([...fetchedMessages, ...aiMessages]); // Ensures messages persist
-  }, [aiMessages]); // Runs whenever AI messages change
-
+  }, [aiMessages, fetchedMessages]); // Runs whenever AI messages change
 
   // Scroll to the bottom of the chat when new messages are added
   useEffect(() => {
@@ -109,18 +137,50 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
     setIsStreaming(status === 'in_progress');
   }, [status]);
 
-  // Cross-browser speech recognition states
-  const [isRecording, setIsRecording] = useState(false)
-  const [isProcessingAudio, setIsProcessingAudio] = useState(false)
-  const recognitionRef = useRef<any>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const audioChunksRef = useRef<Blob[]>([])
-  const finalTranscriptRef = useRef<string>("")
+  // Initialize Speech Recognition (STT) if supported
+  useEffect(() => {
+    const SpeechRecognitionConstructor =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (SpeechRecognitionConstructor) {
+      const recognition = new SpeechRecognitionConstructor()
+      // Record continuously until you manually stop.
+      recognition.continuous = true
+      // Enable interim results so that words are output live.
+      recognition.interimResults = true
+      recognition.lang = 'en-US'
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        let interimTranscript = ""
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          // If result is final, append it to our final transcript.
+          if (event.results[i].isFinal) {
+            finalTranscriptRef.current += event.results[i][0].transcript + " "
+          } else {
+            interimTranscript += event.results[i][0].transcript
+          }
+        }
+        // Combine the final transcript (accumulated so far) with the interim transcript.
+        const currentTranscript = finalTranscriptRef.current + interimTranscript
+        // Update the input field with the live transcript.
+        handleInputChange({
+          target: { value: currentTranscript },
+        } as React.ChangeEvent<HTMLInputElement>)
+      }
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event)
+        setIsRecording(false)
+      }
+      recognition.onend = () => {
+        setIsRecording(false)
+      }
+      recognitionRef.current = recognition
+    }
+  }, [handleInputChange])
 
   // Check if native speech recognition is supported
   const isNativeSpeechRecognitionSupported = () => {
     return !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
   }
+
   // Check if MediaRecorder is supported (for Firefox fallback)
   const isMediaRecorderSupported = () => {
     return !!(window as any).MediaRecorder
@@ -138,6 +198,7 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
       setIsRecording(false)
       return
     }
+
     try {
       // Start recording
       if (isNativeSpeechRecognitionSupported() && recognitionRef.current) {
@@ -156,25 +217,32 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
       alert('Failed to start speech recognition. Please try again or use text input.')
     }
   }
+
   // MediaRecorder implementation for Firefox
   const startMediaRecorder = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      
       const mediaRecorder = new MediaRecorder(stream, {
         mimeType: 'audio/webm;codecs=opus'
       })
+      
       audioChunksRef.current = []
+      
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data)
         }
       }
+      
       mediaRecorder.onstop = async () => {
         setIsRecording(false)
         setIsProcessingAudio(true)
+        
         try {
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
           const transcribedText = await transcribeAudio(audioBlob)
+          
           if (transcribedText) {
             handleInputChange({
               target: { value: transcribedText },
@@ -188,26 +256,32 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
           stream.getTracks().forEach(track => track.stop())
         }
       }
+      
       mediaRecorderRef.current = mediaRecorder
       mediaRecorder.start()
       setIsRecording(true)
+      
     } catch (error) {
       console.error('Error accessing microphone:', error)
       alert('Microphone access denied. Please allow microphone access in your browser settings.')
     }
   }
+
   // Transcribe audio using OpenAI Whisper API
   const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
     try {
       const formData = new FormData()
       formData.append('file', audioBlob, 'audio.webm')
+      
       const response = await fetch('/api/speech-to-text', {
         method: 'POST',
         body: formData,
       })
+      
       if (!response.ok) {
         throw new Error('Failed to transcribe audio')
       }
+      
       const result = await response.json()
       return result.text || ''
     } catch (error) {
@@ -380,8 +454,8 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
       {/* Input Form */}
       <form onSubmit={handleSubmit} className="border-t border-gray-200 bg-white p-4">
         <div className="flex rounded-full bg-gray-100 shadow-inner">
-            {/* Mic button on the left with glowing effect when recording */}
-            <button
+          {/* Mic button on the left with glowing effect when recording */}
+          <button
             type="button"
             onClick={handleRecording}
             title={isRecording ? 'Stop recording' : 'Record your message'}
@@ -402,44 +476,33 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
               <MicOff className="h-5 w-5" />
             )}
           </button>
+
+          {/* Text input field */}
           <input
             type="text"
             value={input}
             onChange={handleInputChange}
-            placeholder="Say hi to begin learning if this is your first time, or continue your existing conversation..."
+            placeholder="Type your message..."
+            className="flex-1 bg-transparent px-4 py-2 outline-none"
             disabled={isStreaming}
-            className="flex-1 rounded-l-full bg-transparent px-6 py-3 focus:outline-none"
           />
+
+          {/* Send button */}
           <button
             type="submit"
-            disabled={!input.trim() && !isStreaming}
-            className={`flex items-center rounded-r-full px-6 py-3 font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 ${
-              isStreaming
-                ? 'bg-red-500 hover:bg-red-600'
-                : input.trim()
-                ? 'bg-blue-500 hover:bg-blue-600'
-                : 'bg-gray-400 cursor-not-allowed'
-            }`}
+            disabled={!input.trim() || isStreaming}
+            className="p-2 rounded-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 hover:bg-gray-300"
           >
             {isStreaming ? (
-              <>
-                <StopCircle className="mr-2 h-5 w-5" />
-                <span className="sr-only">Stop generating</span>
-                <span aria-hidden="true">Stop</span>
-              </>
+              <StopCircle className="h-5 w-5" />
             ) : (
-              <>
-                <Send className="mr-2 h-5 w-5" />
-                <span className="sr-only">Send message</span>
-                <span aria-hidden="true">Send</span>
-              </>
+              <Send className="h-5 w-5" />
             )}
           </button>
         </div>
-
       </form>
     </div>
   );
 };
 
-export default Chat9;
+export default Chat; 
