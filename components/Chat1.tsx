@@ -174,15 +174,23 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
 
   // Check if speech recognition is supported
   const isSpeechRecognitionSupported = () => {
-    return !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
+    const hasSpeechRecognition = !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
+    console.log('Speech recognition supported:', hasSpeechRecognition)
+    console.log('SpeechRecognition available:', !!(window as any).SpeechRecognition)
+    console.log('webkitSpeechRecognition available:', !!(window as any).webkitSpeechRecognition)
+    return hasSpeechRecognition
   }
 
   // ------------------------------
   // Speech-to-text (STT) toggle handler
   // ------------------------------
   const handleRecording = () => {
+    console.log('Mic button clicked')
+    console.log('isSpeechRecognitionSupported():', isSpeechRecognitionSupported())
+    
     if (!isSpeechRecognitionSupported()) {
-      alert('Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari for voice input features.')
+      console.log('Showing browser not supported alert')
+      alert('🚫 Speech recognition is not supported in this browser.\n\nPlease use Chrome, Edge, or Safari for voice input features.\n\nFirefox does not support speech recognition.')
       return
     }
     
@@ -436,6 +444,13 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
             )}
           </button>
         </div>
+        {/* Browser compatibility warning */}
+        {!isSpeechRecognitionSupported() && (
+          <div className="mt-2 text-xs text-red-600 bg-red-50 p-2 rounded-md border border-red-200">
+            <strong>⚠️ Voice input not available:</strong> Your browser (Firefox) doesn't support speech recognition. 
+            Please use Chrome, Edge, or Safari for voice input features.
+          </div>
+        )}
       </form>
     </div>
   );

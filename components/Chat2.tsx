@@ -158,7 +158,9 @@ const Chat2: React.FC<ChatProps> = ({ userId }) => {
 
   // Check if speech recognition is supported
   const isSpeechRecognitionSupported = () => {
-    return !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
+    const hasSpeechRecognition = !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
+    console.log('Speech recognition supported:', hasSpeechRecognition)
+    return hasSpeechRecognition
   }
 
   // ------------------------------
@@ -166,7 +168,8 @@ const Chat2: React.FC<ChatProps> = ({ userId }) => {
   // ------------------------------
   const handleRecording = () => {
     if (!isSpeechRecognitionSupported()) {
-      alert('Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari for voice input features.')
+      console.log('Showing browser not supported alert')
+      alert('🚫 Speech recognition is not supported in this browser.\n\nPlease use Chrome, Edge, or Safari for voice input features.\n\nFirefox does not support speech recognition.')
       return
     }
     

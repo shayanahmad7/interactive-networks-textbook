@@ -166,7 +166,8 @@ const Chat3: React.FC<ChatProps> = ({ userId }) => {
   // ------------------------------
   const handleRecording = () => {
     if (!isSpeechRecognitionSupported()) {
-      alert('Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari for voice input features.')
+      console.log('Showing browser not supported alert')
+      alert('🚫 Speech recognition is not supported in this browser.\n\nPlease use Chrome, Edge, or Safari for voice input features.\n\nFirefox does not support speech recognition.')
       return
     }
     
