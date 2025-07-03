@@ -156,22 +156,31 @@ const Chat3: React.FC<ChatProps> = ({ userId }) => {
     }
   }, [handleInputChange])
 
+  // Check if speech recognition is supported
+  const isSpeechRecognitionSupported = () => {
+    return !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
+  }
+
   // ------------------------------
   // Speech-to-text (STT) toggle handler
   // ------------------------------
   const handleRecording = () => {
+    if (!isSpeechRecognitionSupported()) {
+      alert('Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari for voice input features.')
+      return
+    }
+    
     if (!recognitionRef.current) {
       console.warn('Speech recognition not supported in this browser.')
+      alert('Speech recognition is not available. Please use Chrome, Edge, or Safari.')
       return
     }
     if (isRecording) {
-      recognitionRef.current.start()
-      // recognitionRef.current.stop()
+      recognitionRef.current.stop()  // Fixed: Stop recording when already recording
       setIsRecording(false)
     } else {
       try {
-        // recognitionRef.current.start()
-        recognitionRef.current.stop()
+        recognitionRef.current.start()  // Fixed: Start recording when not recording
         setIsRecording(true)
       } catch (error) {
         console.error('Error starting speech recognition:', error)

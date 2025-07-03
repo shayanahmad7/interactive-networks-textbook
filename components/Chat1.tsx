@@ -128,6 +128,8 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
       // Enable interim results so that words are output live.
       recognition.interimResults = true
       recognition.lang = 'en-US'
+      
+      // Add better error handling
       recognition.onresult = (event: SpeechRecognitionEvent) => {
         let interimTranscript = ""
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -145,36 +147,61 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
           target: { value: currentTranscript },
         } as React.ChangeEvent<HTMLInputElement>)
       }
+      
       recognition.onerror = (event: any) => {
         console.error('Speech recognition error:', event)
         setIsRecording(false)
+        
+        // Handle specific error types
+        if (event.error === 'not-allowed') {
+          alert('Microphone access denied. Please allow microphone access in your browser settings.')
+        } else if (event.error === 'network') {
+          alert('Network error occurred. Please check your internet connection.')
+        } else if (event.error === 'no-speech') {
+          console.log('No speech detected')
+        }
       }
+      
       recognition.onend = () => {
         setIsRecording(false)
       }
+      
       recognitionRef.current = recognition
+    } else {
+      console.warn('Speech recognition not supported in this browser. Consider using Chrome, Edge, or Safari.')
     }
   }, [handleInputChange])
+
+  // Check if speech recognition is supported
+  const isSpeechRecognitionSupported = () => {
+    return !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
+  }
 
   // ------------------------------
   // Speech-to-text (STT) toggle handler
   // ------------------------------
   const handleRecording = () => {
-    if (!recognitionRef.current) {
-      console.warn('Speech recognition not supported in this browser.')
+    if (!isSpeechRecognitionSupported()) {
+      alert('Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari for voice input features.')
       return
     }
+    
+    if (!recognitionRef.current) {
+      console.warn('Speech recognition not supported in this browser.')
+      alert('Speech recognition is not available. Please use Chrome, Edge, or Safari.')
+      return
+    }
+    
     if (isRecording) {
-      recognitionRef.current.start()
-      // recognitionRef.current.stop()
+      recognitionRef.current.stop()  // Fixed: Stop recording when already recording
       setIsRecording(false)
     } else {
       try {
-        // recognitionRef.current.start()
-        recognitionRef.current.stop()
+        recognitionRef.current.start()  // Fixed: Start recording when not recording
         setIsRecording(true)
       } catch (error) {
         console.error('Error starting speech recognition:', error)
+        alert('Failed to start speech recognition. Please try again or use text input.')
       }
     }
   }
@@ -210,7 +237,8 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
       })
 
       if (!response.ok) {
-        throw new Error('TTS API error')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(`TTS API error: ${response.status} - ${errorData.error || 'Unknown error'}`)
       }
 
       // Stream the audio response
@@ -229,9 +257,18 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
         URL.revokeObjectURL(audioUrl)
       }
 
-      audio.play()
+      audio.onerror = (error) => {
+        console.error('Audio playback error:', error)
+        setIsSpeaking(false)
+        setCurrentlySpeakingId(null)
+        currentAudioRef.current = null
+        URL.revokeObjectURL(audioUrl)
+      }
+
+      await audio.play()
     } catch (error) {
       console.error('TTS error: ', error)
+      alert(`Text-to-speech failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -347,11 +384,16 @@ const Chat1: React.FC<ChatProps> = ({ userId }) => {
             <button
             type="button"
             onClick={handleRecording}
-            title={isRecording ? 'Stop recording' : 'Record your message'}
+            title={isSpeechRecognitionSupported() 
+              ? (isRecording ? 'Stop recording' : 'Record your message')
+              : 'Speech recognition not supported in this browser'
+            }
             className={`p-2 rounded-full focus:outline-none ${
               isRecording
                 ? 'animate-pulse ring-4 ring-blue-500 bg-gray-200'
-                : 'bg-gray-200 hover:bg-gray-300'
+                : isSpeechRecognitionSupported()
+                ? 'bg-gray-200 hover:bg-gray-300'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
             }`}
           >
             {isRecording ? (
