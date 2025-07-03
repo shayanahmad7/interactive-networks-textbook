@@ -12,15 +12,12 @@ export async function POST(req: Request) {
     // Get the audio blob from the request
     const audioBlob = await req.blob()
     
-    // Convert blob to FormData for OpenAI API
-    const formData = new FormData()
-    formData.append('file', audioBlob, 'audio.webm')
-    formData.append('model', 'whisper-1')
-    formData.append('language', 'en')
+    // Create a File object from the blob for OpenAI API
+    const audioFile = new File([audioBlob], 'audio.webm', { type: 'audio/webm' })
 
     // Call OpenAI's Whisper API
     const response = await openai.audio.transcriptions.create({
-      file: audioBlob as any,
+      file: audioFile,
       model: 'whisper-1',
       language: 'en',
     })

@@ -436,16 +436,7 @@ const Chat9: React.FC<ChatProps> = ({ userId }) => {
             )}
           </button>
         </div>
-        {/* Speech recognition status */}
-        <div className="mt-2 text-xs text-gray-500">
-          {isNativeSpeechRecognitionSupported() ? (
-            <span>🎤 Using native speech recognition</span>
-          ) : isMediaRecorderSupported() ? (
-            <span>🎤 Using MediaRecorder + Whisper API (works on Firefox!)</span>
-          ) : (
-            <span className="text-red-500">⚠️ Speech recognition not supported in this browser</span>
-          )}
-        </div>
+
       </form>
     </div>
   );
