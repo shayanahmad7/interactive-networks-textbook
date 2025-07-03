@@ -88,15 +88,24 @@ async function saveMessageToDatabase(
 }
 
 // GET endpoint to fetch chat history for a specific user
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const assistantId = params.id;
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const match = url.pathname.match(/\/api\/assistant\/(\w+)/);
+  const assistantId = match ? match[1] : undefined;
 
+  if (!assistantId) {
+    console.error('[API] Missing assistantId in URL path.');
+    return new Response(
+      JSON.stringify({ error: 'Missing assistantId in URL path.' }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
+  try {
     // Parse query parameters
-    const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
 
     if (!userId) {
@@ -146,12 +155,23 @@ export async function GET(
   }
 }
 
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request) {
+  const url = new URL(req.url);
+  const match = url.pathname.match(/\/api\/assistant\/(\w+)/);
+  const assistantId = match ? match[1] : undefined;
+
+  if (!assistantId) {
+    console.error('[API] Missing assistantId in URL path.');
+    return new Response(
+      JSON.stringify({ error: 'Missing assistantId in URL path.' }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
   try {
-    const assistantId = params.id;
     const input: { userId: string; threadId: string | null; message: string } = await req.json();
 
     let threadId = input.threadId;
