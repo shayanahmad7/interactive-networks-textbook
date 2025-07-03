@@ -110,12 +110,13 @@ interface SpeechRecognitionEvent extends Event {
       setIsStreaming(status === 'in_progress');
     }, [status]);
   
-    const [isRecording, setIsRecording] = useState(false) // STT recording flag
-  
-    // Ref for speech recognition (STT)
-    const recognitionRef = useRef<any>(null)
-    // Ref to accumulate final (confirmed) transcript text.
-    const finalTranscriptRef = useRef<string>("");
+      // Cross-browser speech recognition states
+  const [isRecording, setIsRecording] = useState(false)
+  const [isProcessingAudio, setIsProcessingAudio] = useState(false)
+  const recognitionRef = useRef<any>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
+  const finalTranscriptRef = useRef<string>("")
   
     // Initialize Speech Recognition (STT) if supported
     useEffect(() => {
@@ -156,38 +157,122 @@ interface SpeechRecognitionEvent extends Event {
       }
       }, [handleInputChange])
 
-  // Check if speech recognition is supported
-  const isSpeechRecognitionSupported = () => {
+  // Check if native speech recognition is supported
+  const isNativeSpeechRecognitionSupported = () => {
     return !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
+  }
+
+  // Check if MediaRecorder is supported (for Firefox fallback)
+  const isMediaRecorderSupported = () => {
+    return !!(window as any).MediaRecorder
   }
 
   // ------------------------------
   // Speech-to-text (STT) toggle handler
   // ------------------------------
-  const handleRecording = () => {
-    if (!isSpeechRecognitionSupported()) {
-      console.log('Showing browser not supported alert')
-      alert('🚫 Speech recognition is not supported in this browser.\n\nPlease use Chrome, Edge, or Safari for voice input features.\n\nFirefox does not support speech recognition.')
-      return
-    }
-    
-    if (!recognitionRef.current) {
-      console.warn('Speech recognition not supported in this browser.')
-      alert('Speech recognition is not available. Please use Chrome, Edge, or Safari.')
-      return
-    }
-          if (isRecording) {
-      recognitionRef.current.stop()  // Fixed: Stop recording when already recording
+    // Cross-browser speech recognition handler
+  const handleRecording = async () => {
+    if (isRecording) {
+      // Stop recording
+      if (recognitionRef.current && isNativeSpeechRecognitionSupported()) {
+        recognitionRef.current.stop()
+      } else if (mediaRecorderRef.current && isMediaRecorderSupported()) {
+        mediaRecorderRef.current.stop()
+      }
       setIsRecording(false)
-    } else {
-      try {
-        recognitionRef.current.start()  // Fixed: Start recording when not recording
+      return
+    }
+
+    try {
+      // Start recording
+      if (isNativeSpeechRecognitionSupported() && recognitionRef.current) {
+        // Use native speech recognition (Chrome, Edge, Safari)
+        finalTranscriptRef.current = ""
+        recognitionRef.current.start()
         setIsRecording(true)
-        } catch (error) {
-          console.error('Error starting speech recognition:', error)
+      } else if (isMediaRecorderSupported()) {
+        // Use MediaRecorder + Whisper API (Firefox, etc.)
+        await startMediaRecorder()
+      } else {
+        alert('Speech recognition is not supported in this browser. Please use a modern browser.')
+      }
+    } catch (error) {
+      console.error('Error starting speech recognition:', error)
+      alert('Failed to start speech recognition. Please try again or use text input.')
+    }
+  }
+
+  // MediaRecorder implementation for Firefox
+  const startMediaRecorder = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      })
+      
+      audioChunksRef.current = []
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data)
         }
       }
+      
+      mediaRecorder.onstop = async () => {
+        setIsRecording(false)
+        setIsProcessingAudio(true)
+        
+        try {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+          const transcribedText = await transcribeAudio(audioBlob)
+          
+          if (transcribedText) {
+            handleInputChange({
+              target: { value: transcribedText },
+            } as React.ChangeEvent<HTMLInputElement>)
+          }
+        } catch (error) {
+          console.error('Error transcribing audio:', error)
+          alert('Failed to transcribe audio. Please try again.')
+        } finally {
+          setIsProcessingAudio(false)
+          stream.getTracks().forEach(track => track.stop())
+        }
+      }
+      
+      mediaRecorderRef.current = mediaRecorder
+      mediaRecorder.start()
+      setIsRecording(true)
+      
+    } catch (error) {
+      console.error('Error accessing microphone:', error)
+      alert('Microphone access denied. Please allow microphone access in your browser settings.')
     }
+  }
+
+  // Transcribe audio using OpenAI Whisper API
+  const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
+    try {
+      const formData = new FormData()
+      formData.append('file', audioBlob, 'audio.webm')
+      
+      const response = await fetch('/api/speech-to-text', {
+        method: 'POST',
+        body: formData,
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to transcribe audio')
+      }
+      
+      const result = await response.json()
+      return result.text || ''
+    } catch (error) {
+      console.error('Transcription error:', error)
+      throw error
+    }
+  }
   
      // ------------------------------
     // Text-to-speech (TTS) function using OpenAI's API
@@ -357,18 +442,23 @@ interface SpeechRecognitionEvent extends Event {
               <button
               type="button"
               onClick={handleRecording}
-              title={isRecording ? 'Stop recording' : 'Record your message'}
-              className={`p-2 rounded-full focus:outline-none ${
-                isRecording
-                  ? 'animate-pulse ring-4 ring-blue-500 bg-gray-200'
-                  : 'bg-gray-200 hover:bg-gray-300'
-              }`}
+                          title={isRecording ? 'Stop recording' : 'Record your message'}
+            className={`p-2 rounded-full focus:outline-none ${
+              isRecording
+                ? 'animate-pulse ring-4 ring-blue-500 bg-gray-200'
+                : isProcessingAudio
+                ? 'bg-yellow-200 cursor-wait'
+                : 'bg-gray-200 hover:bg-gray-300'
+            }`}
+            disabled={isProcessingAudio}
             >
-              {isRecording ? (
-                <Mic className="h-5 w-5" />
-              ) : (
-                <MicOff className="h-5 w-5" />
-              )}
+                          {isProcessingAudio ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : isRecording ? (
+              <Mic className="h-5 w-5" />
+            ) : (
+              <MicOff className="h-5 w-5" />
+            )}
             </button>
             <input
               type="text"
@@ -403,8 +493,18 @@ interface SpeechRecognitionEvent extends Event {
                 </>
               )}
             </button>
-          </div>
-        </form>
+                  </div>
+        {/* Speech recognition status */}
+        <div className="mt-2 text-xs text-gray-500">
+          {isNativeSpeechRecognitionSupported() ? (
+            <span>🎤 Using native speech recognition</span>
+          ) : isMediaRecorderSupported() ? (
+            <span>🎤 Using MediaRecorder + Whisper API (works on Firefox!)</span>
+          ) : (
+            <span className="text-red-500">⚠️ Speech recognition not supported in this browser</span>
+          )}
+        </div>
+      </form>
       </div>
     );
   };
