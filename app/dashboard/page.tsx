@@ -123,26 +123,6 @@ const chapters = [
       { title: "End-of-Chapter Problems", mastered: false },
     ],
   },
-  {
-    title: "Chapter 9: Multimedia Networking",
-    sections: [
-      { title: "Multimedia Networking Applications", mastered: false },
-      { title: "Streaming Stored Video", mastered: false },
-      { title: "Live Streaming and Real-Time Interactive Applications", mastered: false },
-      { title: "Content Distribution Networks", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
-    ],
-  },
-  {
-    title: "Chapter 10: Network Management",
-    sections: [
-      { title: "Infrastructure for Network Management", mastered: false },
-      { title: "The Internet-Standard Management Framework", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
-    ],
-  },
 ];
 
 
