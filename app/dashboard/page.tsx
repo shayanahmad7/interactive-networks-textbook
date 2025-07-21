@@ -16,131 +16,114 @@ const chapters = [
   {
     title: "Chapter 1: Computer Networks and the Internet",
     sections: [
-      { title: "What is the Internet?", mastered: false },
-      { title: "The Network Edge", mastered: false },
-      { title: "The Network Core", mastered: false },
-      { title: "Delay, Loss, and Throughput in Packet-Switched Networks", mastered: false },
-      { title: "Protocol Layers and Their Service Models", mastered: false },
-      { title: "Networks Under Attack", mastered: false },
-      { title: "History of Computer Networking and the Internet", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
+      { title: "1.1 What Is the Internet?", mastered: false },
+      { title: "1.2 The Network Edge", mastered: false },
+      { title: "1.3 The Network Core", mastered: false },
+      { title: "1.4 Delay, Loss, and Throughput in Packet-Switched Networks", mastered: false },
+      { title: "1.5 Protocol Layers and Their Service Models", mastered: false },
+      { title: "1.6 Networks Under Attack", mastered: false },
+      { title: "1.7 History of Computer Networking and the Internet", mastered: false },
+      { title: "1.8 Summary", mastered: false },
+      { title: "Homework Problems and Questions", mastered: false },
     ],
   },
   {
     title: "Chapter 2: Application Layer",
     sections: [
-      { title: "Principles of Network Applications", mastered: false },
-      { title: "The Web and HTTP", mastered: false },
-      { title: "File Transfer: FTP", mastered: false },
-      { title: "Electronic Mail in the Internet", mastered: false },
-      { title: "DNS—The Internet's Directory Service", mastered: false },
-      { title: "Peer-to-Peer Applications", mastered: false },
-      { title: "Video Streaming and Content Distribution Networks", mastered: false },
-      { title: "Socket Programming: Creating Network Applications", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
+      { title: "2.1 Principles of Network Applications", mastered: false },
+      { title: "2.2 The Web and HTTP", mastered: false },
+      { title: "2.3 Electronic Mail in the Internet", mastered: false },
+      { title: "2.4 DNS—The Internet's Directory Service", mastered: false },
+      { title: "2.5 Peer-to-Peer File Distribution", mastered: false },
+      { title: "2.6 Video Streaming and Content Distribution Networks", mastered: false },
+      { title: "2.7 Socket Programming: Creating Network Applications", mastered: false },
+      { title: "2.8 Summary", mastered: false },
+      { title: "Homework Problems and Questions", mastered: false },
     ],
   },
   {
     title: "Chapter 3: Transport Layer",
     sections: [
-      { title: "Introduction and Transport-Layer Services", mastered: false },
-      { title: "Multiplexing and Demultiplexing", mastered: false },
-      { title: "Connectionless Transport: UDP", mastered: false },
-      { title: "Principles of Reliable Data Transfer", mastered: false },
-      { title: "Connection-Oriented Transport: TCP", mastered: false },
-      { title: "Principles of Congestion Control", mastered: false },
-      { title: "TCP Congestion Control", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
+      { title: "3.1 Introduction and Transport-Layer Services", mastered: false },
+      { title: "3.2 Multiplexing and Demultiplexing", mastered: false },
+      { title: "3.3 Connectionless Transport: UDP", mastered: false },
+      { title: "3.4 Principles of Reliable Data Transfer", mastered: false },
+      { title: "3.5 Connection-Oriented Transport: TCP", mastered: false },
+      { title: "3.6 Principles of Congestion Control", mastered: false },
+      { title: "3.7 TCP Congestion Control", mastered: false },
+      { title: "3.8 Evolution of Transport-Layer Functionality", mastered: false },
+      { title: "3.9 Summary", mastered: false },
+      { title: "Homework Problems and Questions", mastered: false },
     ],
   },
   {
     title: "Chapter 4: The Network Layer: Data Plane",
     sections: [
-      { title: "Introduction", mastered: false },
-      { title: "Forwarding and Routing", mastered: false },
-      { title: "Network Service Models", mastered: false },
-      { title: "Inside a Router", mastered: false },
-      { title: "The Internet Protocol (IP): Forwarding and Addressing in the Internet", mastered: false },
-      { title: "Generalized Forwarding and SDN", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
+      { title: "4.1 Overview of Network Layer", mastered: false },
+      { title: "4.2 What's Inside a Router?", mastered: false },
+      { title: "4.3 The Internet Protocol (IP): IPv4, Addressing, IPv6, and More", mastered: false },
+      { title: "4.4 Generalized Forwarding and SDN", mastered: false },
+      { title: "4.5 Middleboxes", mastered: false },
+      { title: "4.6 Summary", mastered: false },
+      { title: "Homework Problems and Questions", mastered: false },
     ],
   },
   {
     title: "Chapter 5: The Network Layer: Control Plane",
     sections: [
-      { title: "Introduction", mastered: false },
-      { title: "Routing Algorithms", mastered: false },
-      { title: "The Internet's Network Layer", mastered: false },
-      { title: "What's Inside a Router?", mastered: false },
-      { title: "SDN Control Plane", mastered: false },
-      { title: "ICMP: The Internet Control Message Protocol", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
+      { title: "5.1 Introduction", mastered: false },
+      { title: "5.2 Routing Algorithms", mastered: false },
+      { title: "5.3 Intra-AS Routing in the Internet: OSPF", mastered: false },
+      { title: "5.4 Routing Among the ISPs: BGP", mastered: false },
+      { title: "5.5 The SDN Control Plane", mastered: false },
+      { title: "5.6 ICMP: The Internet Control Message Protocol", mastered: false },
+      { title: "5.7 Network Management and SNMP, NETCONF/YANG", mastered: false },
+      { title: "5.8 Summary", mastered: false },
+      { title: "Homework Problems and Questions", mastered: false },
     ],
   },
   {
     title: "Chapter 6: The Link Layer and LANs",
     sections: [
-      { title: "Introduction to the Link Layer", mastered: false },
-      { title: "Error Detection and Correction Techniques", mastered: false },
-      { title: "Multiple Access Links and Protocols", mastered: false },
-      { title: "Switched Local Area Networks", mastered: false },
-      { title: "Link Virtualization: MPLS", mastered: false },
-      { title: "Data Center Networking", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
+      { title: "6.1 Introduction to the Link Layer", mastered: false },
+      { title: "6.2 Error-Detection and -Correction Techniques", mastered: false },
+      { title: "6.3 Multiple Access Links and Protocols", mastered: false },
+      { title: "6.4 Switched Local Area Networks", mastered: false },
+      { title: "6.5 Link Virtualization: A Network as a Link Layer", mastered: false },
+      { title: "6.6 Data Center Networking", mastered: false },
+      { title: "6.7 Retrospective: A Day in the Life of a Web Page Request", mastered: false },
+      { title: "6.8 Summary", mastered: false },
+      { title: "Homework Problems and Questions", mastered: false },
     ],
   },
   {
     title: "Chapter 7: Wireless and Mobile Networks",
     sections: [
-      { title: "Introduction", mastered: false },
-      { title: "Wireless Links and Network Characteristics", mastered: false },
-      { title: "WiFi: 802.11 Wireless LANs", mastered: false },
-      { title: "Cellular Internet Access", mastered: false },
-      { title: "Mobility Management: Principles", mastered: false },
-      { title: "Mobile IP", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
+      { title: "7.1 Introduction", mastered: false },
+      { title: "7.2 Wireless Links and Network Characteristics", mastered: false },
+      { title: "7.3 WiFi: 802.11 Wireless LANs", mastered: false },
+      { title: "7.4 Cellular Networks: 4G and 5G", mastered: false },
+      { title: "7.5 Mobility Management: Principles", mastered: false },
+      { title: "7.6 Mobility Management in Practice", mastered: false },
+      { title: "7.7 Wireless and Mobility: Impact on Higher-Layer Protocols", mastered: false },
+      { title: "7.8 Summary", mastered: false },
+      { title: "Homework Problems and Questions", mastered: false },
     ],
   },
   {
     title: "Chapter 8: Security in Computer Networks",
     sections: [
-      { title: "What is Network Security?", mastered: false },
-      { title: "Principles of Cryptography", mastered: false },
-      { title: "Message Integrity and Authentication", mastered: false },
-      { title: "Securing E-Mail", mastered: false },
-      { title: "Securing TCP Connections: SSL/TLS", mastered: false },
-      { title: "Network-Layer Security: IPsec", mastered: false },
-      { title: "Securing Wireless LANs", mastered: false },
-      { title: "Operational Security: Firewalls and Intrusion Detection Systems", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
-    ],
-  },
-  {
-    title: "Chapter 9: Multimedia Networking",
-    sections: [
-      { title: "Multimedia Networking Applications", mastered: false },
-      { title: "Streaming Stored Video", mastered: false },
-      { title: "Live Streaming and Real-Time Interactive Applications", mastered: false },
-      { title: "Content Distribution Networks", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
-    ],
-  },
-  {
-    title: "Chapter 10: Network Management",
-    sections: [
-      { title: "Infrastructure for Network Management", mastered: false },
-      { title: "The Internet-Standard Management Framework", mastered: false },
-      { title: "Summary", mastered: false },
-      { title: "End-of-Chapter Problems", mastered: false },
+      { title: "8.1 What Is Network Security?", mastered: false },
+      { title: "8.2 Principles of Cryptography", mastered: false },
+      { title: "8.3 Message Integrity and Digital Signatures", mastered: false },
+      { title: "8.4 End-Point Authentication", mastered: false },
+      { title: "8.5 Securing E-Mail", mastered: false },
+      { title: "8.6 Securing TCP Connections: TLS", mastered: false },
+      { title: "8.7 Network-Layer Security: IPsec and Virtual Private Networks", mastered: false },
+      { title: "8.8 Securing Wireless LANs and 4G/5G Cellular Networks", mastered: false },
+      { title: "8.9 Operational Security: Firewalls and Intrusion Detection Systems", mastered: false },
+      { title: "8.10 Summary", mastered: false },
+      { title: "Homework Problems and Questions", mastered: false },
     ],
   },
 ];
@@ -148,27 +131,27 @@ const chapters = [
 
 
 const sectionNames = [
-  "What is the Internet?", 
-  "The Network Edge", 
-  "The Network Core", 
-  "Delay, Loss, and Throughput in Packet-Switched Networks", 
-  "Protocol Layers and Their Service Models", 
-  "Networks Under Attack", 
-  "History of Computer Networking and the Internet", 
-  "Summary",
-  "End-of-Chapter Problems"
+  "1.1 What Is the Internet?", 
+  "1.2 The Network Edge", 
+  "1.3 The Network Core", 
+  "1.4 Delay, Loss, and Throughput in Packet-Switched Networks", 
+  "1.5 Protocol Layers and Their Service Models", 
+  "1.6 Networks Under Attack", 
+  "1.7 History of Computer Networking and the Internet", 
+  "1.8 Summary",
+  "Homework Problems and Questions"
 ];
 
 const chatMap = [
-  "1", // What is the Internet?
-  "2", // The Network Edge
-  "3", // The Network Core
-  "4", // Delay, Loss, and Throughput in Packet-Switched Networks
-  "5", // Protocol Layers and Their Service Models
-  "6", // Networks Under Attack
-  "7", // History of Computer Networking and the Internet
-  "8", // Summary
-  "9"  // End-of-Chapter Problems
+  "1", // 1.1 What Is the Internet?
+  "2", // 1.2 The Network Edge
+  "3", // 1.3 The Network Core
+  "4", // 1.4 Delay, Loss, and Throughput in Packet-Switched Networks
+  "5", // 1.5 Protocol Layers and Their Service Models
+  "6", // 1.6 Networks Under Attack
+  "7", // 1.7 History of Computer Networking and the Internet
+  "8", // 1.8 Summary
+  "9"  // Homework Problems and Questions
 ];
   
     export default function DashboardPage() {
