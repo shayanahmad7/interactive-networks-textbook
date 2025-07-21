@@ -90,10 +90,10 @@ async function saveMessageToDatabase(
 // GET endpoint to fetch chat history for a specific user
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const assistantId = params.id;
+    const { id: assistantId } = await params;
 
     // Parse query parameters
     const url = new URL(req.url);
@@ -148,10 +148,10 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const assistantId = params.id;
+    const { id: assistantId } = await params;
     const input: { userId: string; threadId: string | null; message: string } = await req.json();
 
     let threadId = input.threadId;
