@@ -397,7 +397,7 @@ const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
           <div className="flex items-center justify-center h-full">
             <div className="text-gray-500 text-sm text-center">
               <Loader2 className="inline-block h-5 w-5 animate-spin mr-2" />
-              Loading previous chats...
+              Loading assistant...
             </div>
           </div>
         ) : null}
