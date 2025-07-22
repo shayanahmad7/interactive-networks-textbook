@@ -130,29 +130,16 @@ const chapters = [
 
 
 
-const sectionNames = [
-  "1.1 What Is the Internet?", 
-  "1.2 The Network Edge", 
-  "1.3 The Network Core", 
-  "1.4 Delay, Loss, and Throughput in Packet-Switched Networks", 
-  "1.5 Protocol Layers and Their Service Models", 
-  "1.6 Networks Under Attack", 
-  "1.7 History of Computer Networking and the Internet", 
-  "1.8 Summary",
-  "Homework Problems and Questions"
-];
-
-const chatMap = [
-  "1", // 1.1 What Is the Internet?
-  "2", // 1.2 The Network Edge
-  "3", // 1.3 The Network Core
-  "4", // 1.4 Delay, Loss, and Throughput in Packet-Switched Networks
-  "5", // 1.5 Protocol Layers and Their Service Models
-  "6", // 1.6 Networks Under Attack
-  "7", // 1.7 History of Computer Networking and the Internet
-  "8", // 1.8 Summary
-  "9"  // Homework Problems and Questions
-];
+// helper to compute assistantId <chapter>-<section>
+const getAssistantId = (sectionTitle: string): string | undefined => {
+  for (let c = 0; c < chapters.length; c++) {
+    const idx = chapters[c].sections.findIndex((s) => s.title === sectionTitle)
+    if (idx !== -1) {
+      return `${c + 1}-${idx + 1}`
+    }
+  }
+  return undefined
+};
   
     export default function DashboardPage() {
       const [user, setUser] = useState<any>(null)
@@ -368,8 +355,7 @@ const chatMap = [
                   </button>
                 </div>
                 {(() => {
-                  const index = sectionNames.findIndex(name => name === selectedSection)
-                  const assistantId = index !== -1 ? chatMap[index] : undefined
+                  const assistantId = getAssistantId(selectedSection)
                   return <Chat userId={user.id} assistantId={assistantId} key={`${user.id}-${assistantId || 'none'}`} />
                 })()}
               </div>

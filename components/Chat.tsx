@@ -66,13 +66,23 @@ const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
   const finalTranscriptRef = useRef<string>("")
 
   // Use the useAssistant hook to interact with the OpenAI Assistants API
-  const { status, messages: aiMessages, input, submitMessage, handleInputChange, stop } = useAssistant({
+  const { status, messages: aiMessages, input, submitMessage, handleInputChange, stop, append } = useAssistant({
     api: `/api/assistant/${assistantId}`,
     body: { userId }, // Pass only userId to the backend
   });
 
   const [fetchedMessages, setFetchedMessages] = useState<Message[]>([]); // Store fetched messages
   const [isLoadingHistory, setIsLoadingHistory] = useState(true); // Track loading state
+  const [hasAutoSent, setHasAutoSent] = useState(false); // Track if auto-send has been triggered
+
+  // helper
+  const getSectionNumber = (id: string | undefined) => {
+    if (!id) return undefined;
+    if (id.includes('-')) return id.split('-')[1];
+    return id; // chapter 1 backward compat
+  };
+
+  const sectionNumber = getSectionNumber(assistantId);
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -124,8 +134,71 @@ const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
 
   // Append AI messages while keeping fetched messages
   useEffect(() => {
-    setMessages([...fetchedMessages, ...aiMessages]); // Ensures messages persist
-  }, [aiMessages, fetchedMessages]); // Runs whenever AI messages change
+    // Filter out trigger messages (section numbers 1-9) from Chapter 1
+    const filteredAiMessages = aiMessages.filter(msg => {
+      const isTriggerMessage = msg.role === 'user' && sectionNumber && msg.content === sectionNumber;
+      return !isTriggerMessage;
+    });
+    
+    setMessages([...fetchedMessages, ...filteredAiMessages]); // Ensures messages persist
+  }, [aiMessages, fetchedMessages, assistantId]); // Runs whenever AI messages change
+
+  // Auto-send first message for Chapter 1 sections when no history exists
+  useEffect(() => {
+    if (sectionNumber && !isLoadingHistory && fetchedMessages.length === 0 && aiMessages.length === 0 && !hasAutoSent) {
+      // Auto-send the section number as the first message
+      console.log(`[Chat] Auto-sending first message for section ${sectionNumber}`);
+      
+      // Keep loading state active until AI response starts
+      setIsLoadingHistory(true);
+      
+      // Use the useAssistant hook's streaming mechanism
+      const sendInitialMessage = async () => {
+        try {
+          // Use append to send hidden trigger message without affecting input UI
+          await append({ role: 'user', content: sectionNumber });
+          console.log(`[Chat] Successfully sent initial message for section ${sectionNumber}`);
+        } catch (error) {
+          console.error(`[Chat] Error sending initial message:`, error);
+          setIsLoadingHistory(false);
+        }
+      };
+
+      sendInitialMessage();
+      setHasAutoSent(true);
+    }
+  }, [fetchedMessages.length, aiMessages.length, isLoadingHistory, assistantId, hasAutoSent, userId, append, sectionNumber]);
+
+  // Stop loading when AI starts streaming (first response) or when there are messages
+  useEffect(() => {
+    if (hasAutoSent && (status === 'in_progress' || aiMessages.length > 0)) {
+      // AI has started responding or we have messages, stop the loading state
+      console.log('[Chat] Stopping loading state - AI response detected');
+      setIsLoadingHistory(false);
+    }
+  }, [status, aiMessages.length, hasAutoSent]);
+
+  // Also stop loading if we have any messages (from history or new)
+  useEffect(() => {
+    if (messages.length > 0 && isLoadingHistory) {
+      console.log('[Chat] Stopping loading state - messages detected');
+      setIsLoadingHistory(false);
+    }
+  }, [messages.length, isLoadingHistory]);
+
+  // Fallback: Stop loading after 30 seconds if AI doesn't respond
+  useEffect(() => {
+    if (hasAutoSent && isLoadingHistory) {
+      const timeout = setTimeout(() => {
+        console.warn('[Chat] Loading timeout - stopping loading state');
+        setIsLoadingHistory(false);
+      }, 30000); // 30 seconds timeout
+
+      return () => clearTimeout(timeout);
+    }
+  }, [hasAutoSent, isLoadingHistory]);
+
+  // Remove the custom event listener since we're using direct API calls now
 
   // Scroll to the bottom of the chat when new messages are added
   useEffect(() => {
@@ -452,7 +525,7 @@ const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
       </div>
 
       {/* Input Form */}
-      <form onSubmit={handleSubmit} className="border-t border-gray-200 bg-white p-4">
+      <form onSubmit={handleSubmit} className={`border-t border-gray-200 bg-white p-4 ${isLoadingHistory ? 'opacity-50' : ''}`}>
         <div className="flex rounded-full bg-gray-100 shadow-inner">
           {/* Mic button on the left with glowing effect when recording */}
           <button
@@ -466,7 +539,7 @@ const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
                 ? 'bg-yellow-200 cursor-wait'
                 : 'bg-gray-200 hover:bg-gray-300'
             }`}
-            disabled={isProcessingAudio}
+            disabled={isProcessingAudio || isLoadingHistory}
           >
             {isProcessingAudio ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -484,13 +557,13 @@ const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
             onChange={handleInputChange}
             placeholder="Type your message..."
             className="flex-1 bg-transparent px-4 py-2 outline-none"
-            disabled={isStreaming}
+            disabled={isStreaming || isLoadingHistory}
           />
 
           {/* Send button */}
           <button
             type="submit"
-            disabled={!input.trim() || isStreaming}
+            disabled={!input.trim() || isStreaming || isLoadingHistory}
             className="p-2 rounded-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed bg-gray-200 hover:bg-gray-300"
           >
             {isStreaming ? (
@@ -505,4 +578,4 @@ const Chat: React.FC<ChatProps> = ({ userId, assistantId }) => {
   );
 };
 
-export default Chat; 
+export default Chat;

@@ -188,15 +188,34 @@ export async function POST(
         content: input.message,
       });
 
-      // Save the user's message to MongoDB
-      await saveMessageToDatabase(input.userId, threadId, 'user', input.message, assistantId);
+      // Determine chapter and section from assistantId
+      let chapterNumber: string | undefined
+      let sectionNumber: string | undefined
 
-      // Get the assistant ID from environment variables
-      const assistantEnvVar = `ASSISTANT${assistantId.toUpperCase()}_ID`;
-      const assistantOpenAIId = process.env[assistantEnvVar];
+      if (assistantId.includes('-')) {
+        // Format "<chapter>-<section>"
+        const parts = assistantId.split('-')
+        chapterNumber = parts[0]
+        sectionNumber = parts[1]
+      } else {
+        // Backwards-compat single number = chapter 1
+        chapterNumber = '1'
+        sectionNumber = assistantId
+      }
+
+      // Get the assistant ID for the chapter
+      const chapterEnvVar = `CHAPTER_${chapterNumber}_ASSISTANT_ID`
+      const assistantOpenAIId = process.env[chapterEnvVar]
 
       if (!assistantOpenAIId) {
-        throw new Error(`${assistantEnvVar} is not set`);
+        throw new Error(`${chapterEnvVar} is not set`)
+      }
+
+      // Only save the user's message to MongoDB if it's not a trigger message
+      const isTriggerMessage = input.message === sectionNumber
+
+      if (!isTriggerMessage) {
+        await saveMessageToDatabase(input.userId, threadId, 'user', input.message, assistantId)
       }
 
       // Return a response that will stream the assistant's reply
@@ -251,11 +270,16 @@ async function cancelActiveRuns(threadId: string) {
     const runs = await openai.beta.threads.runs.list(threadId);
     for (const run of runs.data) {
       if (run.status === 'in_progress' || run.status === 'queued') {
-        await openai.beta.threads.runs.cancel(threadId, run.id);
+        try {
+          await openai.beta.threads.runs.cancel(threadId, run.id);
+        } catch (cancelError) {
+          // Ignore errors when trying to cancel already completed/cancelled runs
+          console.log(`Could not cancel run ${run.id} with status ${run.status}:`, cancelError);
+        }
       }
     }
   } catch (error) {
-    console.error('Error canceling active runs:', error);
+    console.error('Error listing runs:', error);
   }
 }
 
