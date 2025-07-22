@@ -1,151 +1,94 @@
-# Interactive Networks Textbook 📡
+# Interactive Networks Textbook 🚀
 
-Live Demo: **https://interactive-networks-textbook.vercel.app/dashboard**  
-Source Code: **https://github.com/shayanahmad7/interactive-networks-textbook**
+Live Demo → **https://interactive-networks-textbook.vercel.app/dashboard**  
+Source Code → **https://github.com/shayanahmad7/interactive-networks-textbook**
 
-This is a **research prototype** that turns the classic textbook _Computer Networking: A Top-Down Approach_ into an AI-guided, fully interactive learning experience.  
-It is being developed with the knowledge and permission of the book’s authors **Prof. Keith Ross** and **Prof. Jim Kurose**.
+An AI-powered, section-by-section tutor for _Computer Networking: A Top-Down Approach_ (8ᵗʰ ed.). Each textbook section launches its own “mini-tutor” that streams explanations, quizzes, and follow-ups—automatically saving progress so learners can resume any time.
 
-While the underlying textbook content remains copyrighted by the authors/publisher, the **interface, code, and AI orchestration** here are open-sourced so that others can build upon or adapt the idea to different domains.
+> **Research prototype** — built with permission from the authors **Prof. Jim Kurose** and **Prof. Keith Ross**. The textbook content remains copyrighted; the code and interface here are MIT-licensed so others can adapt the idea.
 
 ---
 
-## Overview 🏆
+## ✨ Features
 
-### Problem Statement
+|                                 | What it does                                                                                                                        |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 🔸 **Per-Section Mini Tutors**  | One OpenAI Assistant per _chapter_, distinct thread per _section_. Learners get laser-focused help—no off-topic tangents.           |
+| 🔸 **Auto-Start Conversations** | Opening a section silently sends the numeric trigger (e.g. `3` ⇒ _Section 3_) so the tutor greets the learner without manual input. |
+| 🔸 **Streaming UI**             | Responses stream token-by-token; loader disappears the moment the tutor speaks.                                                     |
+| 🔸 **Persistent History**       | Thread + messages stored in MongoDB; reopen a section and continue exactly where you left off.                                      |
+| 🔸 **Mastery Tracking**         | Mark a section “Mastered” once you feel confident—confetti included 🎉.                                                             |
 
-Many students (and adults!) struggle with math confidence. They believe they just “don’t have the math gene.” Our research shows that personalized, step-by-step practice and positive reinforcement can dramatically improve outcomes. But not everyone has access to one-on-one tutoring.
+---
 
-### Our Solution
+## 🏗️ Architecture
 
-We built an AI-powered interactive textbook for Pre-Algebra, providing mini tutors for each topic. This system:
+### Front-End _(Next.js / React / TypeScript)_
 
-- Breaks the content into small, digestible sections (e.g. “Naming Numbers,” “Rounding Whole Numbers,” etc.).
-- Walks the learner through each step, asking questions and clarifying misunderstandings.
-- Tracks mastery by checking if the student can answer 3 questions in a row correctly.
-- Offers positive, supportive messages, emphasizing that anyone can learn math with the right approach!
+- `Dashboard` lists all chapters/sections. Selecting a section renders `Chat` with `assistantId = <chapter>-<section>`.
+- `Chat.tsx` uses **@ai-sdk/react `useAssistant`**:
+  - `append({role:'user', content:<sectionNumber>})` sends the hidden trigger. The trigger is filtered from the UI so learners never see “1 / 2 / …”.
+  - Streams assistant messages; loading overlay tied to hook `status`.
 
-## Key Features ⚙️
+### Back-End _(Next.js Route Handlers)_
 
-### AI Chat
+- `api/assistant/[id]` handles both GET (history) & POST (chat). Logic:
+  1. Parses `assistantId` `<chapter>-<section>`.
+  2. Uses `CHAPTER_<n>_ASSISTANT_ID` env var to pick the OpenAI Assistant.
+  3. Silently ignores & doesn’t store the numeric trigger message.
+  4. Streams assistant response → client; saves assistant text to MongoDB.
 
-A dynamic chat interface (using OpenAI Beta Threads) that:
+---
 
-- Automatically greets the user or sends a topic-specific prompt (e.g. “Section 1: Naming Numbers”).
-- Streams real-time answers and clarifications from the AI.
-- Saves conversation history to MongoDB so learners can pick up where they left off.
+## ⚙️ Local Setup
 
-### Modular Tutors
-
-Instead of one big AI model for the entire book, we can conceptually assign each chapter or section its own “mini tutor.” This ensures a focused learning experience.
-
-### Mastery Checks
-
-If the learner consistently answers questions correctly, the system marks that section as mastered and encourages them to move to the next topic.
-
-### Growth Mindset Cues
-
-Encouraging language (“You got this!”) is embedded throughout. Mistakes are treated as natural learning steps, not failures.
-
-## Architecture 🏗️
-
-### Frontend
-
-- Next.js + React + ai/react for an elegant chat UI.
-- `Chat1.tsx` automatically sends a prompt (like “1”) to start each section, then streams the AI’s replies.
-
-### Backend
-
-- `/api/assistant1/route.ts`: A Next.js route using OpenAI Beta Threads.
-- Stores messages in MongoDB (threads1 collection) for each (threadId).
-- On each user message, we:
-  - Add it to the Beta Thread.
-  - Stream the assistant’s response.
-  - Save that response in Mongo for future reference.
-
-## Installation 🛠️
-
-Clone this repo:
-
-```sh
-git clone https://github.com/YourUser/interactive-prealgebra.git
-```
-
-Install dependencies:
-
-```sh
-cd interactive-prealgebra
+```bash
+git clone https://github.com/shayanahmad7/interactive-networks-textbook
+cd interactive-networks-textbook
 npm install
 ```
 
-Set environment variables in `.env`:
+Create `.env.local`:
 
-```sh
-OPENAI_API_KEY=your_openai_key
-ASSISTANT1_ID=your_assistant_id
-MONGODB_URI=your_mongo_uri
+```env
+OPENAI_API_KEY=sk-••••
+MONGODB_URI=mongodb+srv://•••
+
+# One assistant per chapter (create them in OpenAI dashboard and paste IDs)
+CHAPTER_1_ASSISTANT_ID=asst_•••
+CHAPTER_2_ASSISTANT_ID=asst_•••
+CHAPTER_3_ASSISTANT_ID=asst_•••
+CHAPTER_4_ASSISTANT_ID=asst_•••
+CHAPTER_5_ASSISTANT_ID=asst_•••
+CHAPTER_6_ASSISTANT_ID=asst_•••
+CHAPTER_7_ASSISTANT_ID=asst_•••
+CHAPTER_8_ASSISTANT_ID=asst_•••
 ```
 
-Run the dev server:
-
-```sh
+```bash
 npm run dev
+open http://localhost:3000/dashboard
 ```
 
-Navigate to `http://localhost:3000` and chat away!
+---
 
-## Usage 🚀
+## 📚 Using the Tutor
 
-1. Sign up or log in (if you have authentication).
-2. Pick a chapter/section from the sidebar.
-3. Observe the AI automatically send a “section number” or greeting to start the conversation.
-4. Ask questions in the chatbox or follow the prompts.
-5. Reach mastery by answering 3 correct questions in a row, then unlock the next topic.
+1. Select any section on the left sidebar.
+2. The tutor introduces the topic; ask questions or follow the prompts.
+3. Click “Mastered this unit?” when you feel confident—progress is stored locally.
+4. Return any time; your conversation is restored from MongoDB.
 
-## Contributing 🤝
+---
 
-1. Fork the repo.
-2. Create a feature branch (e.g. `git checkout -b feature/new-algebra-content`).
-3. Push and open a pull request describing your changes.
+## 🤝 Contributing
 
-## Roadmap 🛣️
+1. Fork → feature branch → PR.
+2. Keep commits atomic; run `npm run lint && npm test` (if tests added).
+3. New chapters? Add `CHAPTER_<n>_ASSISTANT_ID` and extend `chapters[]` list in `dashboard/page.tsx`.
 
-- Expand beyond pre-algebra to more math domains.
-- Support text-to-speech for accessibility.
-- Add built-in “growth mindset” quizzes.
-- Enhance real-time collaboration (e.g., teacher and student viewing the same chat).
+---
 
-## License ⚖️
+## 📝 License
 
-This project is licensed under the MIT License. Feel free to use, modify, and distribute.
-
-## Acknowledgements 🙏
-
-We would like to thank the following for their support and contributions:
-
-- OpenAI for providing the AI models and API access.
-- MongoDB for database solutions.
-- The open-source community for their invaluable tools and libraries.
-- Our beta testers for their feedback and suggestions.
-
-## Contact 📧
-
-For any questions, suggestions, or feedback, please reach out to us at support@interactive-prealgebra.com.
-
-## Stay Connected 🌐
-
-Follow us on social media to stay updated with the latest features and announcements:
-
-- Twitter: [@InteractivePreAlgebra](https://twitter.com/InteractivePreAlgebra)
-- Facebook: [Interactive Pre-Algebra](https://facebook.com/InteractivePreAlgebra)
-- LinkedIn: [Interactive Pre-Algebra AI Textbook](https://linkedin.com/company/interactive-prealgebra)
-
-Thank you for being a part of our journey to make math learning more accessible and enjoyable for everyone!
-
-## Authors
-
-- Shayan Ahmad
-- Ramsha Bilal
-- Izah Sohail
-- Aysa Moma
-- Samroz Ahmad Shoaib
+MIT for code & UI. Textbook excerpts belong to Pearson and the authors; used here solely for educational research.
