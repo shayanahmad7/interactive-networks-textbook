@@ -1,6 +1,14 @@
-# Interactive Pre-Algebra AI Textbook ✨
+# Interactive Networks Textbook 📡
 
-Welcome to our Interactive Pre-Algebra AI Textbook project! This platform uses an AI tutor to guide learners step by step through pre-algebra topics—automatically checking for mastery and encouraging a growth mindset along the way.
+Live Demo: **https://interactive-networks-textbook.vercel.app/dashboard**  
+Source Code: **https://github.com/shayanahmad7/interactive-networks-textbook**
+
+This is a **research prototype** that turns the classic textbook _Computer Networking: A Top-Down Approach_ into an AI-guided, fully interactive learning experience.  
+It is being developed with the knowledge and permission of the book’s authors **Prof. Keith Ross** and **Prof. Jim Kurose**.
+
+While the underlying textbook content remains copyrighted by the authors/publisher, the **interface, code, and AI orchestration** here are open-sourced so that others can build upon or adapt the idea to different domains.
+
+---
 
 ## Overview 🏆
 
@@ -135,9 +143,9 @@ Follow us on social media to stay updated with the latest features and announcem
 Thank you for being a part of our journey to make math learning more accessible and enjoyable for everyone!
 
 ## Authors
+
 - Shayan Ahmad
 - Ramsha Bilal
 - Izah Sohail
 - Aysa Moma
 - Samroz Ahmad Shoaib
-
