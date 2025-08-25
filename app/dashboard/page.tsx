@@ -145,10 +145,7 @@ const getAssistantId = (sectionTitle: string): string | undefined => {
       const [user, setUser] = useState<any>(null)
       const [selectedSection, setSelectedSection] = useState<string | null>(null)
       const [expandedChapters, setExpandedChapters] = useState<{ [key: string]: boolean }>({})
-      const [viewMode, setViewMode] = useState<"chat" | "pdf">("chat")
       const router = useRouter()
-      const [numPages, setNumPages] = useState<number | null>(null)
-      const [pageNumber, setPageNumber] = useState(1)
       const [masteredSections, setMasteredSections] = useState<{ [key: string]: boolean }>({})
       const [showPopup, setShowPopup] = useState(false)
       const [showConfetti, setShowConfetti] = useState(false)
@@ -190,10 +187,6 @@ const getAssistantId = (sectionTitle: string): string | undefined => {
         }))
       }
     
-      const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-        setNumPages(numPages)
-      }
-    
       const handleMastery = (isMastered: boolean) => {
         if (selectedSection) {
           setMasteredSections((prev) => ({ ...prev, [selectedSection]: isMastered }))
@@ -225,30 +218,6 @@ const getAssistantId = (sectionTitle: string): string | undefined => {
           </div>
         )
       }
-    
-      const renderPDFViewer = () => (
-        <div className="w-full bg-gray-100 rounded flex flex-col items-center justify-center p-4">
-          <p className="mt-4">
-            Page {pageNumber} of {numPages}
-          </p>
-          <div className="mt-4 flex gap-4">
-            <button
-              onClick={() => setPageNumber((page) => Math.max(page - 1, 1))}
-              disabled={pageNumber <= 1}
-              className="px-4 py-2 bg-indigo-500 text-white rounded disabled:bg-gray-300"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setPageNumber((page) => Math.min(page + 1, numPages || page))}
-              disabled={pageNumber >= (numPages || 1)}
-              className="px-4 py-2 bg-indigo-500 text-white rounded disabled:bg-gray-300"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )
     
       return (
         <div className="flex min-h-screen bg-gradient-to-r from-blue-100 to-purple-100">
@@ -310,24 +279,6 @@ const getAssistantId = (sectionTitle: string): string | undefined => {
                 Dashboard
               </h1>
               <div className="flex items-center gap-4">
-                <div className="flex rounded-lg overflow-hidden border border-indigo-200">
-                  <button
-                    onClick={() => setViewMode("chat")}
-                    className={`px-4 py-2 flex items-center ${
-                      viewMode === "chat" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500 hover:bg-indigo-50"
-                    }`}
-                  >
-                    Mini Tutor
-                  </button>
-                  <button
-                    onClick={() => setViewMode("pdf")}
-                    className={`px-4 py-2 flex items-center ${
-                      viewMode === "pdf" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500 hover:bg-indigo-50"
-                    }`}
-                  >
-                    Textbook PDF
-                  </button>
-                </div>
                 <button
                   onClick={handleSignOut}
                   className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-200 flex items-center"
@@ -338,12 +289,7 @@ const getAssistantId = (sectionTitle: string): string | undefined => {
               </div>
             </div>
     
-            {viewMode === "pdf" ? (
-              <div className="bg-white shadow-lg rounded-lg p-6 border-l-4 border-indigo-500">
-                <h2 className="text-2xl font-bold text-indigo-800 mb-4">Computer Networking: A Top-Down Approach</h2>
-                <embed src="/networks-textbook.pdf" type="application/pdf" width="100%" height="600px" />
-              </div>
-            ) : selectedSection ? (
+            {selectedSection ? (
               <div className="bg-white shadow-lg rounded-lg p-6 border-l-4 border-indigo-500">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-2xl font-bold text-indigo-800">Interactive AI Mini-Tutor for {selectedSection}</h2>
